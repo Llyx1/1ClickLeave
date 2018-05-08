@@ -79,6 +79,10 @@ onFragmentToMainCallbacks,GoogleApiClient.OnConnectionFailedListener, View.OnCli
             SubmitALeaveFragment submitALeaveFragment = SubmitALeaveFragment.newInstance();
             fragmentManager.beginTransaction().replace(R.id.fragment_holder, submitALeaveFragment).commit();
         }
+        else {
+            FirstSignInFragment firstSignInFragment = FirstSignInFragment.newInstance();
+            fragmentManager.beginTransaction().replace(R.id.fragment_holder, firstSignInFragment).commit();
+        }
     }
 
     @Override
@@ -299,6 +303,10 @@ onFragmentToMainCallbacks,GoogleApiClient.OnConnectionFailedListener, View.OnCli
             });
             myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             myDialog.show();
+        }
+        if (sender.equals("FirstSignIn")) {
+            SubmitALeaveFragment submitALeaveFragment = SubmitALeaveFragment.newInstance();
+            fragmentManager.beginTransaction().replace(R.id.fragment_holder, submitALeaveFragment).commit();
         }
     }
 

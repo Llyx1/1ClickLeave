@@ -3,12 +3,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FirstSignInFragment">
+    tools:context=".FirstSignInFragment"
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    android:layout_gravity="center">
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical">
+
+
+        <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp"
+            android:layout_marginTop="50dp"
+        android:textSize="20sp"
+        android:textAlignment="center"
+        android:text="@string/welcomeToSignIn" />
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/sign_in_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="100dp"
+            android:layout_gravity="center"
+            />
+
+    </LinearLayout>
+
+
 
 </FrameLayout>

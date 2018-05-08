@@ -31,7 +31,6 @@
         <item>Working from home with nice cup of tea is amazing isn\'t it !</item>
     </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcomeToSignIn">Hello, you\'re not connected yet ! Can you sign in with your professional account so we won\'t delete paid leave to your friends ? </string>
 
 </resources>
