@@ -1,4 +1,4 @@
-package com.example.boulocalix.a1click1leave;
+package com.example.boulocalix.a1click1leave.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,9 +10,13 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.example.boulocalix.a1click1leave.MainActivity;
+import com.example.boulocalix.a1click1leave.R;
+import com.example.boulocalix.a1click1leave.fragmentInterface.onMainToFragmentCallbacks;
+
 import java.util.ArrayList;
 
-public class SettingsFragment extends Fragment implements  onMainToFragmentCallbacks{
+public class SettingsFragment extends Fragment implements onMainToFragmentCallbacks {
 
     MainActivity main ;
     Context context = null ;

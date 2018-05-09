@@ -1,4 +1,4 @@
-package com.example.boulocalix.a1click1leave;
+package com.example.boulocalix.a1click1leave.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.boulocalix.a1click1leave.R;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.common.ConnectionResult;
@@ -29,7 +30,7 @@ import java.util.List;
 
 import static android.app.Activity.RESULT_OK;
 
-public class SignInClass extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
+public class SignInClass implements GoogleApiClient.OnConnectionFailedListener{
 
     private static final int RC_SIGN_IN = 123;
     FirebaseUser currentUser ;
@@ -43,6 +44,8 @@ public class SignInClass extends AppCompatActivity implements GoogleApiClient.On
     public SignInClass(Context context, Activity activity) {
         this.context = context ;
         this.activity = activity ;
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = mAuth.getCurrentUser();
     }
 
     @Override
@@ -57,6 +60,8 @@ public class SignInClass extends AppCompatActivity implements GoogleApiClient.On
                         .setAvailableProviders(providers)
                         .build(),
                 RC_SIGN_IN);
+        currentUser = mAuth.getCurrentUser();
+        updateUI();
     }
 
     public void signOut() {
@@ -70,29 +75,10 @@ public class SignInClass extends AppCompatActivity implements GoogleApiClient.On
                 });
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-
-            if (resultCode == RESULT_OK) {
-                // Successfully signed in
-                currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                Log.e(TAG, currentUser.getDisplayName());
-                Log.e(TAG, currentUser.getEmail());
-                Log.e(TAG, currentUser.getPhotoUrl().toString());
-                updateUI();
-            } else {
-                Toast.makeText(context, "Your account is not allowed to access this database", Toast.LENGTH_LONG).show();
-            }
-        }
-    }
-
-    private void updateUI() {
-
+    public void updateUI() {
+        currentUser = mAuth.getCurrentUser();
         TextView userName = activity.findViewById(R.id.user_name_header);
         TextView userAddress = activity.findViewById(R.id.user_address);
         ImageView avatar = activity.findViewById(R.id.imageView);

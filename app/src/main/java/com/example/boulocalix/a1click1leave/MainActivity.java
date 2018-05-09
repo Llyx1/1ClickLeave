@@ -3,7 +3,7 @@ package com.example.boulocalix.a1click1leave;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.annotation.NonNull;
+import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
@@ -25,36 +25,34 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
+import com.example.boulocalix.a1click1leave.fragment.FirstSignInFragment;
+import com.example.boulocalix.a1click1leave.fragment.HomePageFragment;
+import com.example.boulocalix.a1click1leave.fragment.SettingsFragment;
+import com.example.boulocalix.a1click1leave.fragment.SubmitALeaveFragment;
+import com.example.boulocalix.a1click1leave.fragmentInterface.onFragmentToMainCallbacks;
+import com.example.boulocalix.a1click1leave.util.SignInClass;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.plus.PlusShare;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.makeramen.roundedimageview.RoundedTransformationBuilder;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Transformation;
 //import com.google.android.gms.plus.PlusShare;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-onFragmentToMainCallbacks,GoogleApiClient.OnConnectionFailedListener, View.OnClickListener{
-
+        onFragmentToMainCallbacks, View.OnClickListener{
+//    GoogleApiClient.OnConnectionFailedListener,
     FragmentManager fragmentManager;
     Dialog myDialog;
-    private static final int RC_SIGN_IN = 123;
-    List<AuthUI.IdpConfig> providers = Arrays.asList(
-            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
-    String email ;
+//    private static final int RC_SIGN_IN = 123;
+//    List<AuthUI.IdpConfig> providers = Arrays.asList(
+//            new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build());
+//    String email ;
     FirebaseUser currentUser ;
     private FirebaseAuth mAuth;
-    private static final String TAG = "LoginActivity";
+    SignInClass signIn ;
+//    private static final String TAG = "LoginActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +72,7 @@ onFragmentToMainCallbacks,GoogleApiClient.OnConnectionFailedListener, View.OnCli
         myDialog = new Dialog(this) ;
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
+
         fragmentManager = getSupportFragmentManager() ;
         if (currentUser != null) {
             SubmitALeaveFragment submitALeaveFragment = SubmitALeaveFragment.newInstance();
@@ -89,15 +88,16 @@ onFragmentToMainCallbacks,GoogleApiClient.OnConnectionFailedListener, View.OnCli
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.nav_header:
+                currentUser = mAuth.getCurrentUser();
                 if (currentUser == null) {
-                    signIn();
+                    signIn.signIn();
                 } else {
                     Snackbar snackbar = Snackbar
                             .make(findViewById(R.id.nav_header), "Disconnect", Snackbar.LENGTH_LONG)
                             .setAction("Yes", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    signOut();
+                                    signIn.signOut();
                                 }
                             });
 
@@ -107,36 +107,11 @@ onFragmentToMainCallbacks,GoogleApiClient.OnConnectionFailedListener, View.OnCli
                 break;
         }
     }
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.e("connection", "connection failed") ;
-    }
-
-
-
-    private void signIn() {
-        startActivityForResult(
-                AuthUI.getInstance()
-                        .createSignInIntentBuilder()
-                        .setAvailableProviders(providers)
-                        .build(),
-                RC_SIGN_IN);
-    }
-
-    private void signOut() {
-        AuthUI.getInstance()
-                .signOut(this)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    public void onComplete(@NonNull Task<Void> task) {
-                        currentUser = null ;
-                        updateUI();
-                    }
-                });
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
+        final int RC_SIGN_IN = 123;
+        final String TAG = "LoginActivity";
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
@@ -148,39 +123,13 @@ onFragmentToMainCallbacks,GoogleApiClient.OnConnectionFailedListener, View.OnCli
                 Log.e(TAG, currentUser.getDisplayName());
                 Log.e(TAG, currentUser.getEmail());
                 Log.e(TAG, currentUser.getPhotoUrl().toString());
-                updateUI();
+                signIn.updateUI();
             } else {
-                Toast.makeText(this, "Your account is not allowed to access this database", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Your account is not allowed to access this database", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-
-    private void updateUI() {
-        TextView userName = findViewById(R.id.user_name_header);
-        TextView userAddress = findViewById(R.id.user_address);
-        ImageView avatar = findViewById(R.id.imageView);
-        if (currentUser !=null) {
-            userName.setText(currentUser .getDisplayName());
-            userAddress.setText(currentUser .getEmail());
-            Transformation transformation = new RoundedTransformationBuilder()
-                    .borderColor(Color.WHITE)
-                    .borderWidthDp(2)
-                    .oval(true)
-                    .build();
-            Picasso.get().load(currentUser.getPhotoUrl()).transform(transformation).into(avatar);
-        }
-        else {
-            userAddress.setText("");
-            userName.setText("");
-            Transformation transformation = new RoundedTransformationBuilder()
-                    .borderColor(Color.WHITE)
-                    .borderWidthDp(2)
-                    .oval(true)
-                    .build();
-            Picasso.get().load("https://www.rapidcitytransportinc.com/assets/global/img/avatar.png").transform(transformation).into(avatar);
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -198,7 +147,8 @@ onFragmentToMainCallbacks,GoogleApiClient.OnConnectionFailedListener, View.OnCli
         getMenuInflater().inflate(R.menu.main, menu);
         LinearLayout navHearder = findViewById(R.id.nav_header) ;
         navHearder.setOnClickListener(this);
-        updateUI();
+        signIn = new SignInClass(this, this) ;
+        signIn.updateUI();
         return true;
     }
 
@@ -292,13 +242,14 @@ onFragmentToMainCallbacks,GoogleApiClient.OnConnectionFailedListener, View.OnCli
             shareGGPlus.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    Intent shareIntent = new PlusShare.Builder(getApplicationContext())
-//                            .setType("text/plain")
-//                            .setText("Welcome to the Google+ platform.")
-//                            .setContentUrl(Uri.parse("https://developers.google.com/+/"))
-//                            .getIntent();
-//
-//                    startActivityForResult(shareIntent, 0);
+                    Intent shareIntent = new PlusShare.Builder(getApplicationContext())
+                            .setType("text/plain")
+                            .setText("Hello Offies, \n" +
+                                    "I'll work from home today for my private reasons. For urgent cases, please call me directly or leave message on Hangout or skype.")
+                            .setContentUrl(Uri.parse("https://plus.google.com/u/0/communities/114247689785052683839"))
+                            .getIntent();
+
+                    startActivityForResult(shareIntent, 0);
                 }
             });
             myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

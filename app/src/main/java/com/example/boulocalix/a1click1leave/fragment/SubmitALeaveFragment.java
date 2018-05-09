@@ -1,4 +1,4 @@
-package com.example.boulocalix.a1click1leave;
+package com.example.boulocalix.a1click1leave.fragment;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -17,6 +17,10 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.boulocalix.a1click1leave.MainActivity;
+import com.example.boulocalix.a1click1leave.R;
+import com.example.boulocalix.a1click1leave.fragmentInterface.onMainToFragmentCallbacks;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

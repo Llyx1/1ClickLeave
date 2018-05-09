@@ -1,4 +1,4 @@
-package com.example.boulocalix.a1click1leave;
+package com.example.boulocalix.a1click1leave.fragment;
 
 import android.content.Context;
 import android.support.v4.app.Fragment;
@@ -8,6 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+
+import com.example.boulocalix.a1click1leave.MainActivity;
+import com.example.boulocalix.a1click1leave.R;
+import com.example.boulocalix.a1click1leave.fragmentInterface.onMainToFragmentCallbacks;
 
 import java.util.ArrayList;
 

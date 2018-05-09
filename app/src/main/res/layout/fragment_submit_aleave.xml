@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:context="com.example.boulocalix.a1click1leave.SubmitALeaveFragment"
+        tools:context="com.example.boulocalix.a1click1leave.fragment.SubmitALeaveFragment"
         android:background="@mipmap/background1">
 
         <ImageView
