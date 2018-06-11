@@ -14,47 +14,74 @@
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="2"
+            android:columnCount="3"
             android:rowCount="4"
+            android:orientation="horizontal"
             android:useDefaultMargins="true"
             >
             <TextView
                 android:layout_width="0dp"
-                android:layout_columnWeight="1"
+                android:layout_columnWeight="5"
                 android:layout_height="wrap_content"
+                android:textSize="18sp"
                 android:text="Name"/>
             <TextView
                 android:id="@+id/user_fullname"
-                android:layout_columnWeight="1"
+                android:layout_columnWeight="5"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:textSize="18sp"
                 android:text="Name"/>
 
             <TextView
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
                 android:layout_width="0dp"
+                android:layout_columnWeight="1"/>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="5"
+                android:layout_width="0dp"
+                android:textSize="18sp"
                 android:text="Phone number"/>
 
             <EditText
                 android:id="@+id/user_phone"
-                android:layout_columnWeight="1"
+                android:layout_columnWeight="5"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Phone number"/>
+                android:textSize="18sp"
+                android:hint="Phone number"
+                android:background="@android:color/transparent"/>
+
+            <Button
+                android:id="@+id/edit_button_phone"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:background="@android:drawable/ic_menu_edit" />
 
             <TextView
-                android:layout_columnWeight="1"
+                android:layout_columnWeight="5"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:textSize="18sp"
                 android:text="Backup "/>
 
             <EditText
                 android:id="@+id/user_backup"
-                android:layout_columnWeight="1"
+                android:layout_columnWeight="5"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="your backup "/>
+                android:textSize="18sp"
+                android:hint="Your backup "
+                android:background="@android:color/transparent"/>
+            <Button
+                android:id="@+id/edit_button_backup"
+                android:layout_width="0dp"
+                android:layout_columnWeight="1"
+                android:layout_height="wrap_content"
+                android:background="@android:drawable/ic_menu_edit" />
         </GridLayout>
 
 
@@ -62,7 +89,6 @@
 
     </LinearLayout>
 
-    <!-- TODO: Update blank fragment layout -->
 
 
 </FrameLayout>

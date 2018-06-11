@@ -73,23 +73,23 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <Button
-            android:id="@+id/return_hp"
+            android:id="@+id/correct"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="return to home page"
+            android:text="Modify"
             android:textSize="12sp"
             android:layout_margin="10dp"
-            android:background="@color/salmon"/>
+            android:background="@color/grey"/>
         <Button
-            android:id="@+id/share_gg_plus"
+            android:id="@+id/confirm"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Share on Google +"
+            android:text="Confirm"
             android:textSize="12sp"
             android:layout_margin="10dp"
-            android:background="@color/salmon"/>
+            android:background="@color/grey"/>
     </LinearLayout>
 
 </LinearLayout>

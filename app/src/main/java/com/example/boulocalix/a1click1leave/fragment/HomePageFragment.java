@@ -8,10 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.example.boulocalix.a1click1leave.MainActivity;
 import com.example.boulocalix.a1click1leave.R;
-import com.example.boulocalix.a1click1leave.fragmentInterface.onMainToFragmentCallbacks;
+import com.example.boulocalix.a1click1leave.callbacks.onMainToFragmentCallbacks;
+import com.example.boulocalix.a1click1leave.model.Employee;
+import com.example.boulocalix.a1click1leave.util.SharePrefer;
 
 import java.util.ArrayList;
 
@@ -23,6 +26,9 @@ public class HomePageFragment extends Fragment implements onMainToFragmentCallba
 
     MainActivity main ;
     Context context = null ;
+    TextView welcomeText = null ;
+    TextView userName ;
+    SharePrefer sharePrefer ;
 
     public HomePageFragment(){}
 
@@ -41,6 +47,7 @@ public class HomePageFragment extends Fragment implements onMainToFragmentCallba
         } catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
+        sharePrefer = new SharePrefer(context) ;
     }
 
     @Nullable
@@ -48,10 +55,14 @@ public class HomePageFragment extends Fragment implements onMainToFragmentCallba
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final RelativeLayout homePage = (RelativeLayout) inflater.inflate(R.layout.fragment_home_page, null);
+        welcomeText = homePage.findViewById(R.id.remaining_days) ;
+        welcomeText.setText(context.getResources().getString(R.string.homepage, Double.toString(sharePrefer.getBalance())));
+        userName = homePage.findViewById(R.id.user_name) ;
+        userName.setText(sharePrefer.getFullName());
         return homePage ;
     }
 
     @Override
-    public void onMainToFragmentCallbacks(ArrayList<String> info) {
+    public void onMainToFragmentCallbacks(Employee employee) {
     }
 }

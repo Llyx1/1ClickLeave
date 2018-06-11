@@ -5,32 +5,37 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
     <string name="recap">You will be off during %1$s days.</string>
+    <string name="homepage">You have %1$s days of annual leave remaining</string>
     <string-array name="choice_array">
         <item>Annual leave</item>
-        <item>Wedding</item>
-        <item>Children\'s     wedding</item>
         <item>Unpaid leave</item>
         <item>Sick leave</item>
         <item>Paternity</item>
         <item>Maternity</item>
         <item>Funeral of a close relative</item>
         <item>Funeral of a relative</item>
-        <item>Work at home</item>
+        <item>Wedding</item>
+        <!--<item>Children\'s     wedding</item>-->
+        <!--<item>Work at home</item>-->
     </string-array>
 
     <string-array name="answer_to_leave">
         <item>Enjoy your holidays</item>
-        <item>Enjoy your wedding ! Do not forgot to bring a justification to HR to get three free day offs.</item>
-        <item>Enjoy the wedding ! Do not forgot to bring a justification to HR to get one free day offs</item>
         <item>Enjoy your free time !</item>
         <item>Hope you will recover soon ! Your day off won\'t be deleted from your annual leave as long as you bring a medical justification to HR</item>
         <item>Big up to the parents ! Enjoy your new baby ! Bring a birth certificate duplicata to HR to enjoy 5&#45;7 days for free with your baby</item>
         <item>Well done for your pregnancy ! You can leave the office up to 6 months to take care of you and your baby as you wish. Do not forget to see that matter with HR !</item>
         <item>We are deeply sorry for you ! You can take some times with your family. Bring a justification to HR so your days off won\'t be deleted from your account.</item>
         <item>We are deeply sorry for you ! You can take some times with your family. Bring a justification to HR so your days off won\'t be deleted from your account.</item>
+        <item>Enjoy your wedding ! Do not forgot to bring a justification to HR to get three free day offs.</item>
+        <item>Enjoy the wedding ! Do not forgot to bring a justification to HR to get one free day offs</item>
         <item>Working from home with nice cup of tea is amazing isn\'t it !</item>
     </string-array>
 
     <string name="welcomeToSignIn">Hello, you\'re not connected yet ! Can you sign in with your professional account so we won\'t delete paid leave to your friends ? </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="server_client_id">827349712490-u8rt9aemhfguugbnv897a1d6utn2dgai.apps.googleusercontent.com</string>
 
 </resources>

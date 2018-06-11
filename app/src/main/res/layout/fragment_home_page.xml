@@ -53,26 +53,15 @@
             android:gravity="center"
             android:layout_margin="@dimen/fab_margin">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="You have "
-                android:fontFamily="sans-serif"
-                />
 
             <TextView
                 android:id="@+id/remaining_days"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="X "
+                android:text="@string/homepage"
                 android:fontFamily="sans-serif" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="annual leave remaining days !"
-                android:fontFamily="sans-serif"
-                />
+
         </LinearLayout>
 
     </LinearLayout>

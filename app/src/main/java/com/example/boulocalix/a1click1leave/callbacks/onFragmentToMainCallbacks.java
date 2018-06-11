@@ -1,4 +1,4 @@
-package com.example.boulocalix.a1click1leave.fragmentInterface;
+package com.example.boulocalix.a1click1leave.callbacks;
 
 import java.util.ArrayList;
 

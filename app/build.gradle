@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        useLibrary 'org.apache.http.legacy'
     }
     buildTypes {
         release {
@@ -29,11 +30,18 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.google.android.gms:play-services-identity:12.0.1'
     implementation 'com.google.android.gms:play-services:12.0.1'
-    implementation 'com.google.firebase:firebase-core:12.0.1'
-    implementation 'com.firebaseui:firebase-ui-auth:3.2.2'
-    implementation 'com.google.firebase:firebase-auth:12.0.1'
+//    implementation 'com.google.firebase:firebase-core:12.0.1'
+//    implementation 'com.firebaseui:firebase-ui-auth:3.2.2'
+//    implementation 'com.google.firebase:firebase-auth:12.0.1'
     implementation 'com.google.android.gms:play-services-auth:12.0.1'
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'com.makeramen:roundedimageview:2.3.0'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    compile 'com.squareup.retrofit2:retrofit:2.4.0'
+    compile 'com.google.code.gson:gson:2.8.2'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.google.apis:google-api-services-oauth2:v1-rev141-1.23.0'
+    implementation 'com.archit.calendar:awesome-calendar:1.0.1'
 }
 apply plugin: 'com.google.gms.google-services'

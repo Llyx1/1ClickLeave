@@ -1,95 +1,55 @@
-package com.example.boulocalix.a1click1leave.fragment;
+package com.example.boulocalix.a1click1leave;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 
-import com.example.boulocalix.a1click1leave.MainActivity;
-import com.example.boulocalix.a1click1leave.R;
-import com.example.boulocalix.a1click1leave.SplashActivity;
-import com.example.boulocalix.a1click1leave.callbacks.onMainToFragmentCallbacks;
+import com.example.boulocalix.a1click1leave.fragment.SubmitALeaveFragment;
 import com.example.boulocalix.a1click1leave.model.Employee;
 import com.example.boulocalix.a1click1leave.util.ApiClient;
 import com.example.boulocalix.a1click1leave.util.ApiInterface;
 import com.example.boulocalix.a1click1leave.util.SharePrefer;
+import com.example.boulocalix.a1click1leave.util.UpdateNavHeaderUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonObject;
 
-import java.util.ArrayList;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+public class SplashActivity extends AppCompatActivity {
 
-public class FirstSignInFragment extends Fragment implements onMainToFragmentCallbacks {
-
-
-        MainActivity main ;
-        Context context ;
-        GoogleSignInClient mGoogleSignInClient ;
-        GoogleSignInAccount mGoogleSignInAccount ;
-        private static final int RC_SIGN_IN = 123;
-        SharePrefer sharePrefer ;
-
-    public FirstSignInFragment() {
-        // Required empty public constructor
-    }
-
-    public static FirstSignInFragment newInstance() {
-        FirstSignInFragment fragment = new FirstSignInFragment();
-        Bundle args = new Bundle();
-        fragment.setArguments(args);
-        return fragment;
-    }
+    SharePrefer sharePrefer ;
+    public static GoogleSignInClient mGoogleSignInClient ;
+    GoogleSignInAccount mGoogleSignInAccount ;
+    Employee employee ;
+    private static final int RC_SIGN_IN = 123;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        try {
-            main = (MainActivity) getActivity() ;
-            context = getActivity() ;
-        } catch (IllegalStateException e) {
-            throw new IllegalStateException("MainActivity must implement callbacks");
-        }
-        GoogleSignInClient googleSignInClient = SplashActivity.mGoogleSignInClient ;
+        setContentView(R.layout.activity_splash);
+        sharePrefer = new SharePrefer(this);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("827349712490-u8rt9aemhfguugbnv897a1d6utn2dgai.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
-        mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
-        sharePrefer = new SharePrefer(context) ;
-        }
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        FrameLayout signInView = (FrameLayout) inflater.inflate(R.layout.fragment_first_sign_in, container, false);
-        SignInButton signInButton = signInView.findViewById(R.id.sign_in_button) ;
-        signInButton.setOnClickListener(new View.OnClickListener() {
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient.silentSignIn().addOnCompleteListener(this, new OnCompleteListener<GoogleSignInAccount>() {
             @Override
-            public void onClick(View v) {
-                signIn();
+            public void onComplete(@NonNull Task<GoogleSignInAccount> task) {
+                handleSignInResult(task);
             }
         });
-        return  signInView ;
     }
 
     private void handleSignInResult(@NonNull Task<GoogleSignInAccount> completedTask) {
@@ -104,22 +64,20 @@ public class FirstSignInFragment extends Fragment implements onMainToFragmentCal
             call.enqueue(new Callback<Employee>() {
                 @Override
                 public void onResponse(Call<Employee> call, Response<Employee> response) {
-                    Employee employee = response.body();
+                    employee = response.body();
                     if (employee == null) {
-                        Toast.makeText(context, "Your address is not part of our database, are you using your offy address ?", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Your address is not part of our database, are you using your offy address ?", Toast.LENGTH_LONG).show();
                         signOut();
                     }
-                    else {
-                        //TODO pop fragment
-                    }
                     sharePrefer.setEmployee(employee);
-
+                    callMain() ;
                 }
 
                 @Override
                 public void onFailure(Call<Employee> call, Throwable t) {
                     // Log error here since request failed
                     Log.e("Json error", t.toString());
+                    callMain();
                 }
             });
         } catch (ApiException e) {
@@ -136,14 +94,19 @@ public class FirstSignInFragment extends Fragment implements onMainToFragmentCal
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
     public void signOut() {
-        mGoogleSignInClient.signOut() ;
-
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(this, new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        // ...
+                    }
+                });
     }
 
-
-    @Override
-    public void onMainToFragmentCallbacks(Employee employee) {
-
+    private void callMain() {
+        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+        return;
     }
-
 }
