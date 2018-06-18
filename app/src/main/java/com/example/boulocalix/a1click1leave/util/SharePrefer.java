@@ -106,6 +106,17 @@ public class SharePrefer {
 
     }
 
+    public void reset() {
+        setAccessToken("empty");
+        setId(-1);
+        setFullName("Unregistered");
+        setEmail("Unregistered");
+        setPicture("https://www.rapidcitytransportinc.com/assets/global/img/avatar.png");
+        setPhone("-1");
+        setBackup("None");
+        setBalance(0.0);
+    }
+
     public String getAccessToken() {return mPref.getString(ACCESS_TOKEN, null);}
     public int getId() {return mPref.getInt(ID, 0);}
     public String getFullName(){return mPref.getString(FULL_NAME, null);}

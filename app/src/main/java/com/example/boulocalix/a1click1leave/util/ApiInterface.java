@@ -2,7 +2,9 @@ package com.example.boulocalix.a1click1leave.util;
 
 import com.example.boulocalix.a1click1leave.model.Employee;
 import com.example.boulocalix.a1click1leave.model.LeaveTicket;
+import com.example.boulocalix.a1click1leave.model.LeaveTypeDto;
 import com.example.boulocalix.a1click1leave.model.Ticket;
+import com.example.boulocalix.a1click1leave.model.User;
 import com.google.gson.JsonObject;
 
 import java.util.List;
@@ -31,11 +33,11 @@ public interface ApiInterface {
 
     @Headers("Content-type: application/json")
     @POST("submitPhone")
-    Call<Employee> submitPhone(@Header("Authorization") String token, @Body JsonObject phone) ;
+    Call<User> submitPhone(@Header("Authorization") String token, @Body JsonObject phone) ;
 
     @Headers("Content-type: application/json")
     @POST("submitBackup")
-    Call<Employee> submitBackup(@Header("Authorization") String token, @Body JsonObject backup) ;
+    Call<User> submitBackup(@Header("Authorization") String token, @Body JsonObject backup) ;
 
     @Headers("Content-type: application/json")
     @POST("submitLeaveTicket")
@@ -44,6 +46,10 @@ public interface ApiInterface {
     @Headers("Accept: application/json")
     @GET("leaveHistoryOfUser/{id}")
     Call<List<Ticket>> getUserHistoric(@Header("Authorization") String token, @Path("id") int id) ;
+
+    @Headers("Accept: application/json")
+    @GET("getLeaveTypeParams")
+    Call<LeaveTypeDto> getLeaveTypeParams(@Header("Authorization") String token) ;
 
 
 }

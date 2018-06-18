@@ -8,7 +8,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/grey">
+        android:background="@color/light_grey">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -17,6 +17,15 @@
             android:orientation="vertical"
             tools:context="com.example.boulocalix.a1click1leave.fragment.SubmitALeaveFragment">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:text="Leave Type"
+                android:textStyle="bold"
+                android:textColor="@color/dark_grey"/>
             <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="match_parent"
@@ -28,19 +37,21 @@
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:drawSelectorOnTop="true"
-                android:background="@color/grey"
-                android:entries="@array/choice_array" />
+                android:background="@color/light_grey"
+                android:entries="@array/choice_array"
+                android:textAlignment="center"/>
 
             <!--</LinearLayout>-->
             <com.example.boulocalix.a1click1leave.util.DateRangeCalendarView
                 android:id="@+id/calendar"
-                android:layout_width="match_parent"
-                android:layout_height="350dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 custom:disable_date_color="#ABABAB"
                 custom:range_color="@color/grey"
                 custom:selected_date_circle_color="@color/dark_grey"
                 android:nestedScrollingEnabled="true"
                 android:layout_gravity="center"
+                android:gravity="center"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
                 android:layout_marginBottom="10dp"
@@ -66,7 +77,9 @@
                     android:layout_width="wrap_content"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Number of days"
+                    android:text="Number of day off"
+                    android:textStyle="bold"
+                    android:textColor="@color/dark_grey"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:layout_margin="10dp"/>
@@ -96,6 +109,7 @@
                         android:layout_height="wrap_content"
                         android:text="0.5"
                         android:layout_gravity="center"
+                        android:textColor="@color/grey"
                         android:gravity="center"
                         android:textStyle="normal"
                         android:button="@null"
@@ -115,24 +129,9 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:textStyle="bold"
+                        android:textColor="@color/dark_grey"
                         android:checked="true"
                         android:button="@null"/>
-
-                    <!--<View-->
-                        <!--android:layout_width="1dp"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:background="@color/dark_grey"-->
-                        <!--/>-->
-
-                    <!--<RadioButton-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_weight="1"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:id="@+id/plus_zero_five"-->
-                        <!--android:layout_gravity="center"-->
-                        <!--android:gravity="center"-->
-                        <!--android:text="1.5"-->
-                        <!--android:button="@null"/>-->
                 </RadioGroup>
 
             </LinearLayout>
@@ -142,10 +141,10 @@
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
                 android:text="Submit"
-                android:textColor="@color/dark_grey"
+                android:textColor="@color/light_grey"
                 android:background="@drawable/button_shape"/>
 
         </LinearLayout>

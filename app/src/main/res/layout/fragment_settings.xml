@@ -3,18 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragment.SettingsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_margin = "20dp">
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginBottom="30dp">
 
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="3"
+            android:columnCount="2"
             android:rowCount="4"
             android:orientation="horizontal"
             android:useDefaultMargins="true"
@@ -35,17 +39,12 @@
 
             <TextView
                 android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:layout_columnWeight="1"/>
-
-            <TextView
-                android:layout_height="wrap_content"
                 android:layout_columnWeight="5"
                 android:layout_width="0dp"
                 android:textSize="18sp"
                 android:text="Phone number"/>
 
-            <EditText
+            <TextView
                 android:id="@+id/user_phone"
                 android:layout_columnWeight="5"
                 android:layout_width="0dp"
@@ -54,12 +53,7 @@
                 android:hint="Phone number"
                 android:background="@android:color/transparent"/>
 
-            <Button
-                android:id="@+id/edit_button_phone"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_columnWeight="1"
-                android:background="@android:drawable/ic_menu_edit" />
+
 
             <TextView
                 android:layout_columnWeight="5"
@@ -68,7 +62,7 @@
                 android:textSize="18sp"
                 android:text="Backup "/>
 
-            <EditText
+            <TextView
                 android:id="@+id/user_backup"
                 android:layout_columnWeight="5"
                 android:layout_width="0dp"
@@ -76,16 +70,18 @@
                 android:textSize="18sp"
                 android:hint="Your backup "
                 android:background="@android:color/transparent"/>
-            <Button
-                android:id="@+id/edit_button_backup"
-                android:layout_width="0dp"
-                android:layout_columnWeight="1"
-                android:layout_height="wrap_content"
-                android:background="@android:drawable/ic_menu_edit" />
+
         </GridLayout>
 
 
-
+        <View
+            android:id="@+id/edit"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:foreground="@mipmap/edit"
+            android:layout_gravity="end"
+            android:layout_margin="10dp"
+            />
 
     </LinearLayout>
 

@@ -2,6 +2,11 @@ package com.example.boulocalix.a1click1leave.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+
 public class Ticket {
     @SerializedName("user_id")
     private  int userId ;
@@ -15,6 +20,8 @@ public class Ticket {
     private String note ;
     @SerializedName("leavetype_id")
     private int leavetypeId ;
+     @SerializedName("status_id")
+     private int status ;
 
     public Ticket(int userId, String startDate, String endDate, Double numberOfDays, String note, int leavetypeId) {
         this.leavetypeId=leavetypeId ;
@@ -25,15 +32,16 @@ public class Ticket {
         this.note = note ;
     }
     public String getEndDate() {
-        return "To " + endDate.substring(0,10);
+        return endDate.substring(8,10)+ "-"+ endDate.substring(5,8) + endDate.substring(2,4) ;
     }
 
     public String getStartDate() {
-        return "From " + startDate.substring(0,10);
+
+        return startDate.substring(8,10)+ "-"+ startDate.substring(5,8) + startDate.substring(2,4);
     }
 
-    public String getNumberOfDay() {
-        return Double.toString(numberOfDays);
+    public Double getNumberOfDay() {
+        return numberOfDays;
     }
 
     public String getReason() {
@@ -67,5 +75,11 @@ public class Ticket {
         }
         return reason ;
     }
+    public int getLeavetypeId() {
+        return leavetypeId ;
+    }
 
+    public int getStatus() {
+        return status;
+    }
 }

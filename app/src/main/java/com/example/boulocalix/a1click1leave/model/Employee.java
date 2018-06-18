@@ -17,24 +17,6 @@ public final class Employee{
     @SerializedName("leave_record")
     private List<LeaveType> leaveRecord;
 
-
-    public class User {
-        @SerializedName("id")
-        private int id ;
-        @SerializedName("name")
-        private String fullName ;
-        @SerializedName("photo")
-        private String photo ;
-        @SerializedName("cluster_id")
-        private int cluster ;
-        @SerializedName("email")
-        private String email ;
-        @SerializedName("phone")
-        private String phone ;
-        @SerializedName("backup_buddy")
-        private String backupBuddy ;
-    }
-
     public class LeaveType {
         @SerializedName("type")
         String typeOfLeave ;
@@ -50,6 +32,10 @@ public final class Employee{
             employee = new Employee() ;
         }
         return employee;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public String getBackupBuddy() {

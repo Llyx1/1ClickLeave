@@ -39,7 +39,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import butterknife.BindView;
 
@@ -47,15 +49,7 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
 
     MainActivity main ;
     Context context = null ;
-    RadioGroup radioGroup ;
     DateRangeCalendarView calendarRangePicker ;
-    LinearLayout oneDayLeaveDateChoice ;
-    LinearLayout multiDayLeaveDateChoice ;
-//    Calendar myCalendar ;
-    LinearLayout startLeave ;
-    LinearLayout endLeave ;
-    LinearLayout dateLeave ;
-    LinearLayout currentLayout ;
     Button submitButton ;
     Spinner spinner ;
     double numberOfDay ;
@@ -63,11 +57,7 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
     Date startLeaveDate ;
     Date endLeaveDate ;
     RadioButton recap ;
-    RadioButton recapPlus ;
     RadioButton recapMinus ;
-    LinearLayout adapting ;
-    CheckBox plus ;
-    CheckBox minus ;
     Dialog myDialog ;
 
     public SubmitALeaveFragment() {}
@@ -123,10 +113,8 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
                     numberOfDay = calculateDayOff() ;
                     recap.setText(Double.toString(numberOfDay));
                     recapMinus.setText(Double.toString(numberOfDay - 0.5));
-                    recapPlus.setText(Double.toString(numberOfDay+0.5));
                     recap.setTypeface(null, Typeface.BOLD);
                     recapMinus.setTypeface(Typeface.DEFAULT);
-                    recapPlus.setTypeface(Typeface.DEFAULT);
                 }
             }
 
@@ -166,19 +154,15 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
                 numberOfDay= Double.parseDouble(recapMinus.getText().toString()) ;
                 recapMinus.setTypeface(null, Typeface.BOLD);
                 recap.setTypeface(Typeface.DEFAULT);
-//                recapPlus.setTypeface(Typeface.DEFAULT);
+                recapMinus.setTextColor(context.getColor(R.color.dark_grey)) ;
+                recap.setTextColor(context.getColor(R.color.grey));
                 break ;
-//            case R.id.plus_zero_five :
-//                numberOfDay= Double.parseDouble(recapPlus.getText().toString()) ;
-//                recapPlus.setTypeface(null, Typeface.BOLD);
-//                recap.setTypeface(Typeface.DEFAULT);
-//                recapMinus.setTypeface(Typeface.DEFAULT);
-//                break ;
             case R.id.default_time :
                 numberOfDay= Double.parseDouble(recap.getText().toString()) ;
                 recap.setTypeface(null, Typeface.BOLD);
                 recapMinus.setTypeface(Typeface.DEFAULT);
-//                recapPlus.setTypeface(Typeface.DEFAULT);
+                recap.setTextColor(context.getColor(R.color.dark_grey)) ;
+                recapMinus.setTextColor(context.getColor(R.color.grey));
                 break ;
             case R.id.button_submit :
                 if (checkDate()) {
@@ -189,6 +173,8 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
                     info.add(sdf.format(endLeaveDate));
                     info.add(Integer.toString(spinner.getSelectedItemPosition()));
                     main.onFragmentToMainCallbacks("SubmitALeaveFragment", info);
+                } else {
+                    Toast.makeText(context, "It seems that you are really late to submit that leave request. Please contact HR to regularize your situation", Toast.LENGTH_LONG).show();
                 }
                 break;
         }
@@ -232,22 +218,13 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
     }
 
     public boolean checkDate() {
-        //TODO modify so late date are accepted depending on the reason
-//        if (startLeaveDate == null || endLeaveDate == null ) {
-//            Toast.makeText(context, "Please enter a date before to submit", Toast.LENGTH_LONG).show(); ;
-//            return false ;
-//        } else if (startLeaveDate.compareTo(endLeaveDate) == 0) {
-//            Calendar calendar = Calendar.getInstance() ;
-//            calendar.setTime(endLeaveDate) ;
-//            calendar.add(Calendar.DATE, 1) ;
-//            endLeaveDate=  calendar.getTime() ;
-//        }
-//        Calendar calendarLocale = Calendar.getInstance(Locale.KOREA) ;
-//        calendarLocale.add(Calendar.DATE, -1) ;
-//        if ((!startLeaveDate.before(endLeaveDate)) || !startLeaveDate.after(calendarLocale.getTime())) {
-//            Toast.makeText(context, "Please enter appropriate date", Toast.LENGTH_LONG).show();
-//            return false ;
-//        }
-        return true ;
+        Calendar curentDay = Calendar.getInstance(TimeZone.getDefault()) ;
+        curentDay.add(Calendar.DAY_OF_YEAR, -7);
+        Calendar dayStart = Calendar.getInstance() ;
+        dayStart.setTime(startLeaveDate);
+        if (dayStart.after(curentDay)){
+            return true ;
+        }
+        return false ;
     }
 }

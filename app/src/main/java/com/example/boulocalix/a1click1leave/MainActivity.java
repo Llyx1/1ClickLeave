@@ -31,6 +31,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.boulocalix.a1click1leave.callbacks.LeaveAPICallbacks;
 import com.example.boulocalix.a1click1leave.fragment.FirstSignInFragment;
 import com.example.boulocalix.a1click1leave.fragment.HistoricFragment;
 import com.example.boulocalix.a1click1leave.fragment.HomePageFragment;
@@ -38,7 +39,10 @@ import com.example.boulocalix.a1click1leave.fragment.SettingsFragment;
 import com.example.boulocalix.a1click1leave.fragment.SubmitALeaveFragment;
 import com.example.boulocalix.a1click1leave.callbacks.onFragmentToMainCallbacks;
 import com.example.boulocalix.a1click1leave.model.Employee;
+import com.example.boulocalix.a1click1leave.model.GoogleClient;
 import com.example.boulocalix.a1click1leave.model.LeaveTicket;
+import com.example.boulocalix.a1click1leave.model.LeaveTypeDto;
+import com.example.boulocalix.a1click1leave.repository.LeaveRepository;
 import com.example.boulocalix.a1click1leave.util.ApiClient;
 import com.example.boulocalix.a1click1leave.util.ApiInterface;
 
@@ -56,6 +60,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -63,19 +68,19 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        onFragmentToMainCallbacks, View.OnClickListener{
+        onFragmentToMainCallbacks, View.OnClickListener, LeaveAPICallbacks{
 
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "HttpRequest";
     FragmentManager fragmentManager;
     Dialog myDialogConfirm;
-    GoogleSignInClient mGoogleSignInClient ;
     GoogleSignInAccount mGoogleSignInAccount ;
     Employee employee ;
     Fragment fragment;
     SharePrefer sharePrefer;
     LinearLayout navHeader;
     MenuItem balance ;
+    List<String> leaveTips ;
 
 
     @Override
@@ -84,6 +89,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
         sharePrefer = new SharePrefer(this);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -96,29 +102,27 @@ public class MainActivity extends AppCompatActivity
         myDialogConfirm = new Dialog(this) ;
         fragmentManager = getSupportFragmentManager() ;
 //        UpdateNavHeaderUtil.updateUI(navHeader, getApplicationContext());
-        if (sharePrefer.getAccessToken() != null) {
+        Intent intent = getIntent() ;
+        if (intent.getBooleanExtra("connexion", false)) {
             fragment = SubmitALeaveFragment.newInstance();
             fragmentManager.beginTransaction().replace(R.id.fragment_holder,fragment).commit();
         } else {
             fragment = FirstSignInFragment.newInstance();
             fragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment).commit();
         }
+        LeaveRepository.getInstance(getApplicationContext()).leaveTypeParams(this);
     }
 
-
-
-
-
-    public void signIn() {
-        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent, RC_SIGN_IN);
-    }
     public void signOut() {
-        mGoogleSignInClient.signOut()
+        GoogleClient googleClient = GoogleClient.getInstance(null) ;
+        GoogleSignInClient googleSignInClient = googleClient.getClient() ;
+        googleSignInClient.signOut()
                 .addOnCompleteListener(this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        // ...
+                        GoogleClient.destroy() ;
+                        sharePrefer.reset() ;
+                        UpdateNavHeaderUtil.updateUI(navHeader, getApplicationContext());
                     }
                 });
     }
@@ -127,24 +131,12 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.nav_header:
-                if (sharePrefer.getAccessToken() == null) {
-                    fragment = FirstSignInFragment.newInstance();
+                if (sharePrefer.getAccessToken() != null) {
+                    fragment = SettingsFragment.newInstance();
                     fragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment).commit();
-                } else {
-                    Snackbar snackbar = Snackbar
-                            .make(findViewById(R.id.nav_header), "Disconnect", Snackbar.LENGTH_LONG)
-                            .setAction("Yes", new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    signOut();
-                                    fragment = FirstSignInFragment.newInstance();
-                                    fragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment).commit();
-                                }
-                            });
-
-                    snackbar.show();
                 }
-
+                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+                drawer.closeDrawer(GravityCompat.START);
                 break;
         }
     }
@@ -167,7 +159,6 @@ public class MainActivity extends AppCompatActivity
         navHeader = findViewById(R.id.nav_header);
         navHeader.setOnClickListener(this);
         UpdateNavHeaderUtil.updateUI(navHeader, getApplicationContext());
-
         return true;
     }
 
@@ -203,7 +194,18 @@ public class MainActivity extends AppCompatActivity
             } else if (id == R.id.nav_reward) {
 
             } else if (id == R.id.nav_personnal_information) {
-                fragmentClass = SettingsFragment.class ;
+                Snackbar snackbar = Snackbar
+                        .make(findViewById(R.id.nav_header), "Disconnect", Snackbar.LENGTH_LONG)
+                        .setAction("Yes", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                signOut();
+                                fragment = FirstSignInFragment.newInstance();
+                                fragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment).commit();
+                            }
+                        });
+
+                snackbar.show();
             } else if (id == R.id.nav_home_page) {
                 fragmentClass = HomePageFragment.class ;
             }
@@ -216,17 +218,6 @@ public class MainActivity extends AppCompatActivity
             fragmentManager = getSupportFragmentManager() ;
             fragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment).commit();
             }
-        } else {
-            Snackbar snackbar = Snackbar
-                    .make(findViewById(R.id.nav_header), "Please sign in", Snackbar.LENGTH_LONG)
-                    .setAction("SignIn", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            signIn();
-                        }
-                    });
-
-            snackbar.show();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -259,11 +250,15 @@ public class MainActivity extends AppCompatActivity
             final Button returnBtn = myDialogConfirm.findViewById(R.id.correct) ;
             Button confirm = myDialogConfirm.findViewById(R.id.confirm) ;
             TextView HRAnswer = myDialogConfirm.findViewById(R.id.hr_answer_pop) ;
-            leavingDate.setText(info.get(1));
-            returnDate.setText(info.get(2));
+            if (!info.get(1).equals(info.get(2))) {
+                leavingDate.setText(info.get(1));
+                returnDate.setText(info.get(2));
+            } else {
+                myDialogConfirm.findViewById(R.id.optionnal_recap).setVisibility(View.GONE);
+            }
             final int spinnerPosition = Integer.parseInt(info.get(3)) ;
             image.setImageResource(pictureId[spinnerPosition]);
-            HRAnswer.setText(answer[spinnerPosition]);
+            HRAnswer.setText(leaveTips.get(spinnerPosition));
             txtclose.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -287,8 +282,11 @@ public class MainActivity extends AppCompatActivity
             });
             myDialogConfirm.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             myDialogConfirm.show();
-        }else if (sender.equals("FirstSignIn")) {
-                    signIn();
+        }else if (sender.equals("SignIn")) {
+            SubmitALeaveFragment submitALeaveFragment = SubmitALeaveFragment.newInstance();
+            fragmentManager.beginTransaction().replace(R.id.fragment_holder, submitALeaveFragment).commit();
+            UpdateNavHeaderUtil.updateUI(navHeader, getApplicationContext());
+
         }else if (sender.equals("settings")) {
             if (info == null) {
                 SettingsFragment settingsFragment = (SettingsFragment) fragment ;
@@ -330,5 +328,20 @@ public class MainActivity extends AppCompatActivity
                 returnHomePage() ;
             }
         });
+    }
+
+    @Override
+    public void onCreateDatabaseError(String mess) {
+
+    }
+
+    @Override
+    public void onContactDatabaseSuccess(Object data) {
+        if (data instanceof LeaveTypeDto) {
+            leaveTips = new ArrayList<>() ;
+            for (int i= 0; i<((LeaveTypeDto) data).type.size(); i++) {
+                leaveTips.add(((LeaveTypeDto) data).type.get(0).tips);
+            }
+        }
     }
 }

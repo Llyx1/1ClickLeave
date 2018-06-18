@@ -17,6 +17,7 @@ import com.example.boulocalix.a1click1leave.R;
 import com.example.boulocalix.a1click1leave.SplashActivity;
 import com.example.boulocalix.a1click1leave.callbacks.onMainToFragmentCallbacks;
 import com.example.boulocalix.a1click1leave.model.Employee;
+import com.example.boulocalix.a1click1leave.model.GoogleClient;
 import com.example.boulocalix.a1click1leave.util.ApiClient;
 import com.example.boulocalix.a1click1leave.util.ApiInterface;
 import com.example.boulocalix.a1click1leave.util.SharePrefer;
@@ -73,6 +74,7 @@ public class FirstSignInFragment extends Fragment implements onMainToFragmentCal
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
+        GoogleClient.getInstance(mGoogleSignInClient) ;
         sharePrefer = new SharePrefer(context) ;
         }
 
@@ -105,15 +107,15 @@ public class FirstSignInFragment extends Fragment implements onMainToFragmentCal
                 @Override
                 public void onResponse(Call<Employee> call, Response<Employee> response) {
                     Employee employee = response.body();
+                    sharePrefer.setEmployee(employee);
+                    sharePrefer.setPicture(mGoogleSignInAccount.getPhotoUrl().toString());
                     if (employee == null) {
                         Toast.makeText(context, "Your address is not part of our database, are you using your offy address ?", Toast.LENGTH_LONG).show();
                         signOut();
                     }
                     else {
-                        //TODO pop fragment
+                        main.onFragmentToMainCallbacks("SignIn", null);
                     }
-                    sharePrefer.setEmployee(employee);
-
                 }
 
                 @Override
@@ -134,9 +136,27 @@ public class FirstSignInFragment extends Fragment implements onMainToFragmentCal
     public void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
+
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+        }
+    }
+
+
     public void signOut() {
-        mGoogleSignInClient.signOut() ;
+        mGoogleSignInClient.signOut()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        GoogleClient.destroy() ;
+                    }
+                });
 
     }
 

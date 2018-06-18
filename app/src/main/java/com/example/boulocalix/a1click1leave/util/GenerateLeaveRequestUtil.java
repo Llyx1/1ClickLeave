@@ -1,9 +1,12 @@
 package com.example.boulocalix.a1click1leave.util;
 
 import android.content.Context;
+import android.widget.Toast;
 
+import com.example.boulocalix.a1click1leave.callbacks.LeaveAPICallbacks;
 import com.example.boulocalix.a1click1leave.model.LeaveTicket;
 import com.example.boulocalix.a1click1leave.model.Ticket;
+import com.example.boulocalix.a1click1leave.repository.LeaveRepository;
 import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
@@ -14,7 +17,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class GenerateLeaveRequestUtil {
+public class GenerateLeaveRequestUtil implements LeaveAPICallbacks {
     SharePrefer sharePrefer ;
     Context context ;
 
@@ -51,85 +54,87 @@ public class GenerateLeaveRequestUtil {
         switch (leaveType) {
             case 1: //Paid Leave
                 if (numberOfDay > remaining) {
-                    extraDays = numberOfDay - remaining ;
-                    numberOfDay = remaining ;
-                    sharePrefer.setBalance(0.0);
-                }else {sharePrefer.setBalance(remaining-numberOfDay);}
-                break;
-            case 4 : //Paternity
-                returnTable = checkBalance(7.0, numberOfDay) ;
-                break;
-            case 5 : //Maternity
-                returnTable = checkBalance(180.0, numberOfDay) ;
-                break;
-            case 6 : //Funeral close
-                returnTable = checkBalance(3.0, numberOfDay) ;
-                break;
-            case 7 : //Funeral
-                returnTable = checkBalance(1.0, numberOfDay) ;
-                break;
-            case 8 : //Wedding
-                returnTable = checkBalance(3.0, numberOfDay) ;
-                break;
-            case 9 : //Wedding children
-                returnTable = checkBalance(1.0, numberOfDay) ;
+                    returnTable[2] = numberOfDay - remaining ;
+                    returnTable[0] = remaining ;
+                }
                 break;
                 default:
-
+                    returnTable = checkBalance(leaveType, numberOfDay) ;
         }
 
-        if (returnTable[0]!=0) {
-//            JsonObject ticket = new JsonObject();
-//            ticket.addProperty("user_id", sharePrefer.getId());
-//            ticket.addProperty("start_date", info.get(1));
-//            ticket.addProperty("end_date", info.get(2));
-//            ticket.addProperty("number_of_days", returnTable[0]);
-//            ticket.addProperty("note" , "huhu");
-//            ticket.addProperty("leavetype_id" , leaveType);
+        if (returnTable[0]!=0.0) {
             Ticket ticket = new Ticket(sharePrefer.getId(), info.get(1), info.get(2), returnTable[0], "huhu", leaveType) ;
-            leaveRequest(ticket);
+            LeaveRepository.getInstance(context).leaveRequest(ticket, this);
         }
 
-        if (returnTable[1]!=0.0) {
-//            JsonObject ticket1 = new JsonObject();
-//            ticket1.addProperty("user_id", sharePrefer.getId());
-//            ticket1.addProperty("start_date", info.get(1));
-//            ticket1.addProperty("end_date", info.get(2));
-//            ticket1.addProperty("number_of_days", returnTable[1]);
-//            ticket1.addProperty("note" , "huhu");
-//            ticket1.addProperty("leavetype_id" , 2); //Unpaid
-            Ticket ticket1 = new Ticket(sharePrefer.getId(), info.get(1), info.get(2), returnTable[1], "huhu", 2) ;
-            leaveRequest(ticket1);
-        }
         if (returnTable[2]!=0.0) {
-//            JsonObject ticket1 = new JsonObject();
-//            ticket1.addProperty("user_id", sharePrefer.getId());
-//            ticket1.addProperty("start_date", info.get(1));
-//            ticket1.addProperty("end_date", info.get(2));
-//            ticket1.addProperty("number_of_days", returnTable[2]);
-//            ticket1.addProperty("note" , "huhu");
-//            ticket1.addProperty("leavetype_id" , 1); //Paid
-            Ticket ticket1 = new Ticket(sharePrefer.getId(), info.get(1), info.get(2), returnTable[2], "huhu", 1) ;
-            leaveRequest(ticket1);
+            Ticket ticket1 = new Ticket(sharePrefer.getId(), info.get(1), info.get(2), returnTable[2], "huhu", 2) ;
+            LeaveRepository.getInstance(context).leaveRequest(ticket1,this);
+        }
+        if (returnTable[1]!=0.0) {
+            Ticket ticket2 = new Ticket(sharePrefer.getId(), info.get(1), info.get(2), returnTable[1], "huhu", 1) ;
+            LeaveRepository.getInstance(context).leaveRequest(ticket2, this);
         }
     }
 
-    private Double[] checkBalance (Double maxDayOfPerCase, Double numberOfDay) {
+    private Double[] checkBalance (int leaveType, Double numberOfDay) {
+        Double maxDayOfPerCase = getMaxDayOffPerCase(leaveType) ;
         Double extraDays = 0.0 ;
         Double reportPaidLeave = 0.0 ;
         Double remaining = sharePrefer.getBalance() ;
-        if (numberOfDay > maxDayOfPerCase) {
-            if (numberOfDay -maxDayOfPerCase > remaining) {
-                reportPaidLeave = numberOfDay - 7 ;
+        if (numberOfDay > maxDayOfPerCase) { //amount superior of the maximal amount granted by the company
+            if (numberOfDay -maxDayOfPerCase > remaining) { //not enough paid leave to cover the difference
+                reportPaidLeave = remaining ;
                 extraDays = numberOfDay - maxDayOfPerCase - remaining ;
                 numberOfDay = maxDayOfPerCase ;
-                sharePrefer.setBalance(0.0);
-            }else {
+            }else { //enough paid leave to cover the difference
                 reportPaidLeave = numberOfDay - maxDayOfPerCase ;
-                sharePrefer.setBalance(remaining-numberOfDay + maxDayOfPerCase);
+                numberOfDay = maxDayOfPerCase ;
             }
         }
-        Double[] returnTable = {numberOfDay, extraDays, reportPaidLeave} ;
+        Double[] returnTable = {numberOfDay, reportPaidLeave, extraDays} ;
         return returnTable ;
+    }
+
+    private Double getMaxDayOffPerCase(int leaveType) {
+        Double maxDayOff ;
+      switch (leaveType) {
+          case 4 : //Paternity
+              maxDayOff = 7.0 ;
+              break;
+          case 5 : //Maternity
+              maxDayOff = 180.0 ;
+              break;
+          case 6 : //Funeral close
+              maxDayOff = 3.0 ;
+              break;
+          case 7 : //Funeral
+              maxDayOff = 1.0 ;
+              break;
+          case 8 : //Wedding
+              maxDayOff = 3.0 ;
+              break;
+          case 9 : //Wedding children
+              maxDayOff = 1.0 ;
+              break;
+          default:
+              maxDayOff = 0.0 ;
+              break;
+      }
+      return maxDayOff ;
+    }
+
+    @Override
+    public void onContactDatabaseSuccess(Object data) {
+        if (data instanceof LeaveTicket) {
+            if (((LeaveTicket) data).getTicket().getLeavetypeId() == 1 ) {
+                sharePrefer.setBalance(sharePrefer.getBalance()-((LeaveTicket) data).getTicket().getNumberOfDay());
+            }
+        }
+    }
+
+    @Override
+    public void onCreateDatabaseError(String mess) {
+        Toast.makeText(context, mess, Toast.LENGTH_LONG).show();
     }
 }

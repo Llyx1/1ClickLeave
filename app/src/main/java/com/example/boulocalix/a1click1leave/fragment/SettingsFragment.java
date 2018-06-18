@@ -1,7 +1,9 @@
 package com.example.boulocalix.a1click1leave.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +18,7 @@ import com.example.boulocalix.a1click1leave.MainActivity;
 import com.example.boulocalix.a1click1leave.R;
 import com.example.boulocalix.a1click1leave.callbacks.onMainToFragmentCallbacks;
 import com.example.boulocalix.a1click1leave.model.Employee;
+import com.example.boulocalix.a1click1leave.model.User;
 import com.example.boulocalix.a1click1leave.util.ApiClient;
 import com.example.boulocalix.a1click1leave.util.ApiInterface;
 import com.example.boulocalix.a1click1leave.util.SharePrefer;
@@ -30,10 +33,9 @@ public class SettingsFragment extends Fragment implements onMainToFragmentCallba
     MainActivity main ;
     Context context = null ;
     TextView fullNameTV;
-    EditText phoneET ;
-    EditText backupET ;
-    Button editPhoneBtn ;
-    Button editBackupBtn ;
+    TextView phoneTV ;
+    TextView backupTV ;
+    View editBtn ;
     SharePrefer sharePrefer ;
 
 
@@ -42,7 +44,7 @@ public class SettingsFragment extends Fragment implements onMainToFragmentCallba
     }
 
 
-    public static SettingsFragment newInstance(Employee employee) {
+    public static SettingsFragment newInstance() {
         SettingsFragment fragment = new SettingsFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -70,50 +72,90 @@ public class SettingsFragment extends Fragment implements onMainToFragmentCallba
         super.onCreateView(inflater, container, savedInstanceState);
         final FrameLayout settings = (FrameLayout) inflater.inflate(R.layout.fragment_settings, container, false);
         fullNameTV = settings.findViewById(R.id.user_fullname) ;
-        phoneET = settings.findViewById(R.id.user_phone);
-        backupET = settings.findViewById(R.id.user_backup) ;
-        editBackupBtn = settings.findViewById(R.id.edit_button_backup) ;
-        editBackupBtn.setOnClickListener(this);
-        editPhoneBtn = settings.findViewById(R.id.edit_button_phone) ;
-        editPhoneBtn.setOnClickListener(this);
+        phoneTV = settings.findViewById(R.id.user_phone);
+        backupTV = settings.findViewById(R.id.user_backup) ;
+        editBtn = settings.findViewById(R.id.edit) ;
+        editBtn.setOnClickListener(this);
         fullNameTV.setText(sharePrefer.getFullName());
-        phoneET.setText(sharePrefer.getPhone());
-        backupET.setText(sharePrefer.getBackup());
+        phoneTV.setText(sharePrefer.getPhone());
+        backupTV.setText(sharePrefer.getBackup());
         return settings ;
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId()==R.id.edit_button_backup || v.getId()==R.id.edit_button_phone) {
-            ApiInterface apiService =
-                    ApiClient.getClient().create(ApiInterface.class);
-            JsonObject info = new JsonObject();
-            info.addProperty("id", sharePrefer.getId());
-            Call<Employee> call ;
-            if (v.getId()==R.id.edit_button_backup) {
-                info.addProperty("backup", backupET.getText().toString());
-                 call= apiService.submitBackup(sharePrefer.getAccessToken(), info);
-            }else {
-                    info.addProperty("phone", phoneET.getText().toString());
-                    call = apiService.submitPhone(sharePrefer.getAccessToken(), info);
-            }
-            call.enqueue(new Callback<Employee>() {
-                @Override
-                public void onResponse(Call<Employee> call, Response<Employee> response) {
-                    if (response.body()!= null) {
-
-                        Employee employee = response.body();
-                        sharePrefer.setEmployee(employee);
-                    }
-                }
-                @Override
-                public void onFailure(Call<Employee> call, Throwable t) {
-                    // Log error here since request failed
-                    Log.e("Json error", t.toString());
-                }
-            });
+        if (v.getId()==R.id.edit) {
+            showEditDialog();
         }
     }
+
+    private void showEditDialog() {
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.pop_up_settings);
+
+        final EditText phoneET= dialog.findViewById(R.id.user_phone_edit);
+        final EditText backupET = dialog.findViewById(R.id.user_backup_edit);
+        TextView dialogCancelButton = dialog.findViewById(R.id.cancel_btn);
+        Button dialogSaveButton = dialog.findViewById(R.id.save_btn) ;
+
+
+        phoneET.setText(sharePrefer.getPhone());
+        backupET.setText(sharePrefer.getBackup());
+        // if ok button is clicked, close the custom dialog
+        dialogSaveButton.setOnClickListener(new View.OnClickListener() {
+                                              @Override
+                                              public void onClick(View v) {
+                                                  APIProvider("backup", backupET.getText().toString());
+                                                  APIProvider("phone", phoneET.getText().toString());
+                                                  dialog.dismiss();
+                                              }
+                                          });
+        // if close button is clicked, close the custom dialog
+        dialogCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        } );
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+    }
+
+    private void APIProvider(final String information, final String content) {
+        ApiInterface apiService =
+                ApiClient.getClient().create(ApiInterface.class);
+        JsonObject info = new JsonObject();
+        info.addProperty("id", sharePrefer.getId());
+        Call<User> call ;
+        if (information.equals("backup")){
+            info.addProperty("backup",content);
+            call= apiService.submitBackup(sharePrefer.getAccessToken(), info);
+        } else {
+            info.addProperty("phone", content);
+            call = apiService.submitPhone(sharePrefer.getAccessToken(), info);
+        }
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if (response.body()!= null) {
+                    if (information.equals("backup")){
+                        sharePrefer.setBackup(content);
+                        backupTV.setText(content);
+                    }else {
+                   sharePrefer.setPhone(content);
+                   phoneTV.setText(content);
+                  }
+
+                }
+            }
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                // Log error here since request failed
+                Log.e("Json error", t.toString());
+            }
+        });
+    }
+
 
     @Override
     public void onMainToFragmentCallbacks(Employee employee) {
