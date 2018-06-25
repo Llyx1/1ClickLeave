@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.example.boulocalix.a1click1leave.MainActivity;
@@ -23,6 +26,8 @@ import com.example.boulocalix.a1click1leave.util.ApiClient;
 import com.example.boulocalix.a1click1leave.util.ApiInterface;
 import com.example.boulocalix.a1click1leave.util.SharePrefer;
 import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,7 +65,7 @@ public class SettingsFragment extends Fragment implements onMainToFragmentCallba
         } catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
-            main.onFragmentToMainCallbacks("settings", null);
+//            main.onFragmentToMainCallbacks("settings", null);
         sharePrefer = new SharePrefer(context) ;
         }
 
@@ -92,20 +97,49 @@ public class SettingsFragment extends Fragment implements onMainToFragmentCallba
     private void showEditDialog() {
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.pop_up_settings);
-
+        final  LinearLayout linearLayout = dialog.findViewById(R.id.pop_up_settings) ;
         final EditText phoneET= dialog.findViewById(R.id.user_phone_edit);
-        final EditText backupET = dialog.findViewById(R.id.user_backup_edit);
-        TextView dialogCancelButton = dialog.findViewById(R.id.cancel_btn);
+        final EditText backupET = dialog.findViewById(R.id.user_backup_edit) ;
+        Button dialogCancelButton = dialog.findViewById(R.id.cancel_btn);
         Button dialogSaveButton = dialog.findViewById(R.id.save_btn) ;
-
-
+        Button addBackup = dialog.findViewById(R.id.add_backup) ;
         phoneET.setText(sharePrefer.getPhone());
-        backupET.setText(sharePrefer.getBackup());
+        String backups = sharePrefer.getBackup() ;
+        final ArrayList<EditText> backupsET = new ArrayList<>() ;
+        int i = 0 ;
+        while (backups.contains("\n")) {
+            backupsET.add(new EditText(context));
+            linearLayout.addView(backupsET.get(i), linearLayout.getChildCount()-2);
+            backupsET.get(i).setText(backups.substring(backups.lastIndexOf("\n")+1));
+            backupsET.get(i).setSingleLine();
+            backupsET.get(i).setBackground(context.getDrawable(R.color.transparent));
+            backupsET.get(i).setTextSize(18);
+            backups = backups.substring(0,backups.lastIndexOf("\n")) ;
+            i++ ;
+        }
+        backupET.setText(backups);
+        backupsET.add(backupET) ;
+        addBackup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backupsET.add(new EditText(context));
+                linearLayout.addView(backupsET.get(backupsET.size()-1), linearLayout.getChildCount()-2);
+                backupsET.get(backupsET.size()-1).setSingleLine();
+                backupsET.get(backupsET.size()-1).setBackground(context.getDrawable(R.color.transparent));
+                backupsET.get(backupsET.size()-1).setTextSize(18);
+            }
+        });
         // if ok button is clicked, close the custom dialog
         dialogSaveButton.setOnClickListener(new View.OnClickListener() {
                                               @Override
                                               public void onClick(View v) {
-                                                  APIProvider("backup", backupET.getText().toString());
+                                                  String backups = "" ;
+                                                  for (int i = backupsET.size()-1; i>=0; i--) {
+                                                      if (backupsET.get(i).getText() != null|| backupsET.get(i).getText().toString().equals("") ) {
+                                                          backups = backups + backupsET.get(i).getText().toString() + "\n";
+                                                      }
+                                                  }
+                                                  APIProvider("backup", backups.substring(0, backups.length()-1));
                                                   APIProvider("phone", phoneET.getText().toString());
                                                   dialog.dismiss();
                                               }

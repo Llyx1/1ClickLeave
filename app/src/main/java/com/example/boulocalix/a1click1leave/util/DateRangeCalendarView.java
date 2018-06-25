@@ -126,6 +126,7 @@ public class DateRangeCalendarView extends LinearLayout {
         LinearLayout mainView = (LinearLayout) layoutInflater.inflate(R.layout.layout_calendar_month, this, true);
         llDaysContainer = (LinearLayout) mainView.findViewById(R.id.llDaysContainer);
         llTitleWeekContainer = (LinearLayout) mainView.findViewById(R.id.llTitleWeekContainer);
+        llTitleWeekContainer.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, 50));
         tvYearTitle = (CustomTextView) mainView.findViewById(R.id.tvYearTitle);
         imgVNavLeft = (ImageView) mainView.findViewById(R.id.imgVNavLeft);
         imgVNavRight = (ImageView) mainView.findViewById(R.id.imgVNavRight);
@@ -314,7 +315,11 @@ public class DateRangeCalendarView extends LinearLayout {
 
         for (int i = 0; i < llDaysContainer.getChildCount(); i++) {
             LinearLayout weekRow = (LinearLayout) llDaysContainer.getChildAt(i);
-
+            LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, 110) ;
+            lp.setMargins(0,0,0,0);
+            weekRow.setLayoutParams(lp);
+            weekRow.setBackgroundColor(Color.parseColor("#00FFFFFF"));
+            int numberOfEmptyChild = 0 ;
             for (int j = 0; j < 7; j++) {
                 RelativeLayout rlDayContainer = (RelativeLayout) weekRow.getChildAt(j);
 
@@ -324,24 +329,21 @@ public class DateRangeCalendarView extends LinearLayout {
                 if (fonts != null) {
                     container.tvDate.setTypeface(fonts);
                 }
+                RelativeLayout.LayoutParams lp1 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT) ;
+                lp1.setMargins(0,0,0,0);
+                container.tvDate.setLayoutParams(lp1);
+//                container.rootView.setLayoutParams(lp);
+                container.tvDate.setBackgroundColor(Color.parseColor("#00FFFFFF"));
+                container.rootView.setBackgroundColor(Color.parseColor("#00FFFFFF"));
+//                if (container.tvDate.isCursorVisible()){
+//                    numberOfEmptyChild ++ ;
+//                    rlDayContainer.setVisibility(GONE);
+//                    if (numberOfEmptyChild == 7){
+//                        weekRow.setVisibility(GONE);
+//                    }
+//                }
                 Log.v("Hello", "Date: " + month.getTime().toString());
                 drawDayContainer(container, month);
-
-//                if (month.get(Calendar.DATE) == today && init) {
-//                    int key = (int) rlDayContainer.getTag();
-//                    final Calendar selectedCal = Calendar.getInstance();
-//                    Date date = new Date();
-//                    try {
-//                        date = simpleDateFormat.parse(String.valueOf(key));
-//                    } catch (ParseException e) {
-//                        e.printStackTrace();
-//                    }
-//                    selectedCal.setTime(date);
-//                    minSelectedDate = selectedCal;
-//                    makeAsSelectedDate(container, 0);
-//                    init = false ;
-//                }
-
                 month.add(Calendar.DATE, 1);
             }
         }

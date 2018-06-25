@@ -58,9 +58,9 @@
                 android:layout_marginTop="10dp"
                 custom:title_color="@color/dark_grey"
                 android:background="@drawable/turn_shape"
-                custom:text_size_date="15sp"
-                custom:text_size_title="17sp"
-                custom:text_size_week="13sp"
+                custom:text_size_date="9sp"
+                custom:text_size_title="9sp"
+                custom:text_size_week="9sp"
                 custom:selected_date_color="@color/grey">
                 <!--custom:header_bg="@drawable/calendar_header"-->
                 <!--custom:title_color="@color/calendar_header_title"-->
@@ -84,55 +84,79 @@
                     android:gravity="center"
                     android:layout_margin="10dp"/>
 
-                <!--<TextView-->
-                    <!--android:id="@+id/number_of_day_recap"-->
-                    <!--android:layout_width="0dp"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_weight="1"-->
-                    <!--android:text="1"-->
-                    <!--android:layout_gravity="center"-->
-                    <!--android:gravity="center"-->
-                    <!--/>-->
-
-                <RadioGroup
-                    android:layout_width="match_parent"
+                <LinearLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center"
                     android:layout_gravity="center"
-                    android:checkedButton="@null">
+                    android:gravity="center">
 
-                    <RadioButton
+                    <Button
                         android:id="@+id/minus_zero_five"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:text="0.5"
-                        android:layout_gravity="center"
-                        android:textColor="@color/grey"
-                        android:gravity="center"
-                        android:textStyle="normal"
-                        android:button="@null"
-                        />
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:background="@mipmap/moins_plein"/>
 
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:background="@color/dark_grey"
-                        />
-                    <RadioButton
+                    <EditText
                         android:id="@+id/default_time"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="1.0"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:textStyle="bold"
+                        android:background="@color/transparent"
                         android:textColor="@color/dark_grey"
-                        android:checked="true"
-                        android:button="@null"/>
-                </RadioGroup>
+                        android:textSize="15sp"
+                        android:textAlignment="center"
+                        android:inputType="numberDecimal"
+                        android:layout_marginRight="20dp"
+                        android:layout_marginLeft="20dp"
+                        android:numeric="decimal"/>
+
+                    <Button
+                        android:id="@+id/plus_zero_five"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:background="@mipmap/plus_vide"/>
+                </LinearLayout>
+
+
+
+                <!--<RadioGroup-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:orientation="horizontal"-->
+                    <!--android:gravity="center"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:checkedButton="@null">-->
+
+                    <!--<RadioButton-->
+                        <!--android:id="@+id/minus_zero_five"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:text="0.5"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:textColor="@color/grey"-->
+                        <!--android:gravity="center"-->
+                        <!--android:textStyle="normal"-->
+                        <!--android:button="@null"-->
+                        <!--/>-->
+
+                    <!--<View-->
+                        <!--android:layout_width="1dp"-->
+                        <!--android:layout_height="match_parent"-->
+                        <!--android:background="@color/dark_grey"-->
+                        <!--/>-->
+                    <!--<RadioButton-->
+                        <!--android:id="@+id/default_time"-->
+                        <!--android:layout_width="0dp"-->
+                        <!--android:layout_weight="1"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:text="1.0"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:gravity="center"-->
+                        <!--android:textStyle="bold"-->
+                        <!--android:textColor="@color/dark_grey"-->
+                        <!--android:checked="true"-->
+                        <!--android:button="@null"/>-->
+                <!--</RadioGroup>-->
 
             </LinearLayout>
 

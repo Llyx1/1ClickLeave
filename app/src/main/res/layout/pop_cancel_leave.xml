@@ -11,7 +11,7 @@
         android:text="Do you want to cancel \n that leave request ?"
         android:layout_margin="20dp"/>
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
@@ -20,12 +20,12 @@
         android:id="@+id/cancel_leave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cancel"/>
+        android:text="@string/no"/>
     <Button
         android:id="@+id/confirm_leave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cast_tracks_chooser_dialog_ok"/>
+        android:text="@string/yes"/>
 
     </LinearLayout>
 

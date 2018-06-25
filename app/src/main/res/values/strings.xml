@@ -37,5 +37,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="server_client_id">827349712490-u8rt9aemhfguugbnv897a1d6utn2dgai.apps.googleusercontent.com</string>
+    <string name="no">No</string>
+    <string name="yes">Yes</string>
 
 </resources>

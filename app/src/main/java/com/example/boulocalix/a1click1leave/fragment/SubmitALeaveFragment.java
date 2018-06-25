@@ -1,5 +1,6 @@
 package com.example.boulocalix.a1click1leave.fragment;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -11,12 +12,16 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -33,6 +38,7 @@ import com.example.boulocalix.a1click1leave.model.Employee;
 
 import com.example.boulocalix.a1click1leave.util.CalendarUtil;
 import com.example.boulocalix.a1click1leave.util.DateRangeCalendarView;
+import com.example.boulocalix.a1click1leave.util.KeyboardUtil;
 import com.google.android.gms.plus.PlusShare;
 
 import java.text.SimpleDateFormat;
@@ -56,8 +62,11 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
     double numberOfDayTotal ;
     Date startLeaveDate ;
     Date endLeaveDate ;
-    RadioButton recap ;
-    RadioButton recapMinus ;
+//    RadioButton recap ;
+//    RadioButton recapMinus ;
+    EditText recap ;
+    Button minusZeroFive ;
+    Button plusZeroFive ;
     Dialog myDialog ;
 
     public SubmitALeaveFragment() {}
@@ -94,14 +103,38 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         final FrameLayout submitALeave = (FrameLayout) inflater.inflate(R.layout.fragment_submit_aleave, null);
+        submitALeave.setOnClickListener(this);
         submitButton = submitALeave.findViewById(R.id.button_submit) ;
         spinner = submitALeave.findViewById(R.id.spinner);
         recap = submitALeave.findViewById(R.id.default_time) ;
-        recap.setOnClickListener(this);
-//        recapPlus = submitALeave.findViewById(R.id.plus_zero_five) ;
-//        recapPlus.setOnClickListener(this);
-        recapMinus = submitALeave.findViewById(R.id.minus_zero_five) ;
-        recapMinus.setOnClickListener(this);
+        KeyboardUtil.hideKeyboard(context);
+        recap.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                Double wantedNumber = Double.parseDouble(v.getText().toString()) ;
+                if (wantedNumber >= numberOfDay) {
+                    if (wantedNumber > numberOfDay){
+                        recap.setText(Double.toString(numberOfDay));
+                    }
+                    reset();
+
+                } else if (wantedNumber <= numberOfDay/2) {
+                    if (wantedNumber < numberOfDay/2) {
+                        recap.setText(Double.toString(numberOfDay / 2));
+                    }
+                    minusZeroFive.setBackground(context.getDrawable(R.mipmap.moins_vide));
+                    plusZeroFive.setBackground(context.getDrawable(R.mipmap.plus_plein));
+                }else {
+                    minusZeroFive.setBackground(context.getDrawable(R.mipmap.moins_plein));
+                    plusZeroFive.setBackground(context.getDrawable(R.mipmap.plus_plein));
+                }
+                return false;
+            }
+        });
+        minusZeroFive = submitALeave.findViewById(R.id.minus_zero_five) ;
+        minusZeroFive.setOnClickListener(this);
+        plusZeroFive = submitALeave.findViewById(R.id.plus_zero_five) ;
+        plusZeroFive.setOnClickListener(this);
         myDialog = new Dialog(context) ;
         calendarRangePicker = submitALeave.findViewById(R.id.calendar) ;
         calendarRangePicker.setCalendarListener(new DateRangeCalendarView.CalendarListener() {
@@ -112,9 +145,8 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
                     endLeaveDate=endDate.getTime() ;
                     numberOfDay = calculateDayOff() ;
                     recap.setText(Double.toString(numberOfDay));
-                    recapMinus.setText(Double.toString(numberOfDay - 0.5));
-                    recap.setTypeface(null, Typeface.BOLD);
-                    recapMinus.setTypeface(Typeface.DEFAULT);
+                    reset();
+                    KeyboardUtil.hideKeyboard(context);
                 }
             }
 
@@ -126,11 +158,8 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
                     endLeaveDate=date.getTime() ;
                     numberOfDay = 1 ;
                     recap.setText("1.0");
-                    recapMinus.setText("0.5");
-//                    recapPlus.setText("1.5");
-                    recap.setTypeface(null, Typeface.BOLD);
-                    recapMinus.setTypeface(Typeface.DEFAULT);
-//                    recapPlus.setTypeface(Typeface.DEFAULT);
+                    reset();
+                    KeyboardUtil.hideKeyboard(context);
                 }
             }
 
@@ -145,30 +174,38 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
         return submitALeave ;
     }
 
+    public void reset() {
+        minusZeroFive.setBackground(context.getDrawable(R.mipmap.moins_plein));
+        plusZeroFive.setBackground(context.getDrawable(R.mipmap.plus_vide));
 
+    }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.minus_zero_five :
-                numberOfDay= Double.parseDouble(recapMinus.getText().toString()) ;
-                recapMinus.setTypeface(null, Typeface.BOLD);
-                recap.setTypeface(Typeface.DEFAULT);
-                recapMinus.setTextColor(context.getColor(R.color.dark_grey)) ;
-                recap.setTextColor(context.getColor(R.color.grey));
+                if (Double.parseDouble(recap.getText().toString())>numberOfDay/2) {
+                    recap.setText(Double.toString(Double.parseDouble(recap.getText().toString()) - 0.5));
+                    if (Double.parseDouble(recap.getText().toString()) <= numberOfDay / 2) {
+                        minusZeroFive.setBackground(context.getDrawable(R.mipmap.moins_vide));
+                    }
+                    plusZeroFive.setBackground(context.getDrawable(R.mipmap.plus_plein));
+                }
                 break ;
-            case R.id.default_time :
-                numberOfDay= Double.parseDouble(recap.getText().toString()) ;
-                recap.setTypeface(null, Typeface.BOLD);
-                recapMinus.setTypeface(Typeface.DEFAULT);
-                recap.setTextColor(context.getColor(R.color.dark_grey)) ;
-                recapMinus.setTextColor(context.getColor(R.color.grey));
+            case R.id.plus_zero_five:
+                if(Double.parseDouble(recap.getText().toString())<numberOfDay) {
+                    recap.setText(Double.toString(Double.parseDouble(recap.getText().toString()) + 0.5));
+                    if (Double.parseDouble(recap.getText().toString()) >= numberOfDay) {
+                        plusZeroFive.setBackground(context.getDrawable(R.mipmap.plus_vide));
+                    }
+                    minusZeroFive.setBackground(context.getDrawable(R.mipmap.moins_plein));
+                }
                 break ;
             case R.id.button_submit :
                 if (checkDate()) {
                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
                     ArrayList<String> info = new ArrayList<>();
-                    info.add(Double.toString(numberOfDay));
+                    info.add(Double.toString(Double.parseDouble(recap.getText().toString())));
                     info.add(sdf.format(startLeaveDate));
                     info.add(sdf.format(endLeaveDate));
                     info.add(Integer.toString(spinner.getSelectedItemPosition()));
@@ -176,6 +213,9 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
                 } else {
                     Toast.makeText(context, "It seems that you are really late to submit that leave request. Please contact HR to regularize your situation", Toast.LENGTH_LONG).show();
                 }
+                break;
+            default :
+                KeyboardUtil.hideKeyboard(context);
                 break;
         }
     }
