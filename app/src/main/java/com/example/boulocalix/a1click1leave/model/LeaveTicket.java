@@ -17,7 +17,9 @@ public final class LeaveTicket {
 
 
     public String getGift() {
-        return gift.getName();
+        if (gift != null) {
+        return gift.getName(); }
+        else return  null ; 
     }
 
     public Ticket getTicket() {
