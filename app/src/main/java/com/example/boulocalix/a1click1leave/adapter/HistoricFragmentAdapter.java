@@ -69,6 +69,7 @@ public class HistoricFragmentAdapter extends RecyclerView.Adapter<HistoricFragme
                     //TODO if that thing appears change the status array of this file and the string file according to the database
                 }
                 holder.dateHitory.setVisibility(View.VISIBLE);
+                holder.allocate.setVisibility(View.GONE);
                 if(ticket.getStatus()==3) {
                     holder.status.setTextColor(0xFF46C4C2) ;
                     holder.status.setTypeface(null, Typeface.BOLD);
@@ -88,7 +89,9 @@ public class HistoricFragmentAdapter extends RecyclerView.Adapter<HistoricFragme
                     holder.status.setTextColor(0xFF46C4C2) ;
                     holder.status.setTypeface(null, Typeface.BOLD);
                     holder.status.setText("Approved");
-                    holder.dateHitory.setVisibility(View.INVISIBLE);
+                    holder.dateHitory.setVisibility(View.GONE);
+                    holder.allocate.setVisibility(View.VISIBLE);
+                    holder.allocate.setText(ticket.getCreatedAt());
                 }
             }
 
@@ -176,6 +179,8 @@ public class HistoricFragmentAdapter extends RecyclerView.Adapter<HistoricFragme
         LinearLayout itemLayout ;
         @BindView(R.id.date_history)
         LinearLayout dateHitory ;
+        @BindView(R.id.allocate_date)
+        TextView allocate ;
 
         public MyViewHolder(View itemView) {
             super(itemView);

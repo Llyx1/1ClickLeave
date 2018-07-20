@@ -1,7 +1,6 @@
 package com.example.boulocalix.a1click1leave.fragment;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -21,24 +20,14 @@ import com.example.boulocalix.a1click1leave.R;
 import com.example.boulocalix.a1click1leave.adapter.HistoricFragmentAdapter;
 import com.example.boulocalix.a1click1leave.callbacks.LeaveAPICallbacks;
 import com.example.boulocalix.a1click1leave.callbacks.onMainToFragmentCallbacks;
-import com.example.boulocalix.a1click1leave.model.Employee;
 import com.example.boulocalix.a1click1leave.model.Ticket;
 import com.example.boulocalix.a1click1leave.model.User;
 import com.example.boulocalix.a1click1leave.repository.LeaveRepository;
-import com.example.boulocalix.a1click1leave.util.ApiClient;
-import com.example.boulocalix.a1click1leave.util.ApiInterface;
 import com.example.boulocalix.a1click1leave.util.SharePrefer;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import butterknife.BindView;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 public class HistoricFragment extends Fragment implements onMainToFragmentCallbacks, LeaveAPICallbacks{
@@ -98,10 +87,12 @@ public class HistoricFragment extends Fragment implements onMainToFragmentCallba
         leaveTypeFilter = history.findViewById(R.id.leave_type_filter) ;
         statusFilter = history.findViewById(R.id.status_filter) ;
         ArrayAdapter adapter = ArrayAdapter.createFromResource(context,
-                R.array.historic_leave_type, R.layout.spinner_item_historic);
+                R.array.historic_leave_type, R.layout.spinner_item_historic_single);
+        adapter.setDropDownViewResource(R.layout.spinner_item_historic_dropdown);
         leaveTypeFilter.setAdapter(adapter);
         ArrayAdapter adapter1 = ArrayAdapter.createFromResource(context,
-                R.array.historic_status_type, R.layout.spinner_item_historic);
+                R.array.historic_status_type, R.layout.spinner_item_historic_single);
+        adapter1.setDropDownViewResource(R.layout.spinner_item_historic_dropdown);
         statusFilter.setAdapter(adapter1);
         leaveTypeFilter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

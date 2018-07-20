@@ -24,7 +24,8 @@
                 android:id="@+id/background_image_view"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
-                android:background="@mipmap/background_profile"/>
+                android:background="@mipmap/background_profile"
+                android:scaleType="centerCrop"/>
 
             <ImageView
                 android:id="@+id/profile_picture"

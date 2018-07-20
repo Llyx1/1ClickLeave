@@ -24,6 +24,8 @@ public class Ticket {
      private int status ;
      @SerializedName("id")
      private int id ;
+     @SerializedName("created_at")
+     private String createdAt ;
 
     public Ticket(int userId, String startDate, String endDate, Double numberOfDays, String note, int leavetypeId) {
         this.leavetypeId=leavetypeId ;
@@ -98,5 +100,9 @@ public class Ticket {
 
     public int getId() {
         return id;
+    }
+
+    public  String getCreatedAt() {
+        return createdAt = "Allocated the " + createdAt.substring(8,10) +"/" +createdAt.substring(5,7)+ "/"+ createdAt.substring(0,4) ;
     }
 }

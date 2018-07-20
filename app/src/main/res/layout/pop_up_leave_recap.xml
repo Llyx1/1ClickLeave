@@ -8,13 +8,14 @@
     android:gravity="center_horizontal"
     android:background="@color/white">
 
-    <View
+    <ImageView
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:foregroundGravity="center_vertical"
-        android:background="@mipmap/background_popup" >
+        android:src="@mipmap/background_popup"
+        android:scaleType="centerCrop">
 
-    </View>
+    </ImageView>
 
         <TextView
             android:layout_width="wrap_content"
