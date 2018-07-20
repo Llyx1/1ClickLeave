@@ -34,6 +34,7 @@ public class Ticket {
         this.userId = userId ;
         this.numberOfDays = numberOfDays ;
         this.note = note ;
+        this.createdAt = null ;
     }
     public String getEndDate() {
         return endDate.substring(8,10)+ "-"+ endDate.substring(5,8) + endDate.substring(2,4) ;

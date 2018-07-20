@@ -10,14 +10,14 @@ public final class LeaveTicket {
     @SerializedName("thanks")
     private String thanks ;
     @SerializedName("gift")
-    private String gift ;
+    private Gift gift ;
     @SerializedName("useful_tip")
     private String tips;
 
 
 
     public String getGift() {
-        return gift;
+        return gift.getName();
     }
 
     public Ticket getTicket() {
@@ -30,5 +30,14 @@ public final class LeaveTicket {
 
     public String getTips() {
         return tips;
+    }
+
+    private  final class Gift {
+        @SerializedName("gift_name")
+        String name ;
+
+        public String getName() {
+            return name;
+        }
     }
 }

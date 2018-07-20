@@ -55,5 +55,6 @@ dependencies {
         exclude group: 'com.google.android'
     }
     implementation 'com.google.firebase:firebase-core:16.0.1'
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.+'
 }
 //apply plugin: 'com.google.gms.google-services'

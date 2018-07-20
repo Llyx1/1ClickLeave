@@ -3,13 +3,18 @@ package com.example.boulocalix.a1click1leave;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.example.boulocalix.a1click1leave.fragment.SubmitALeaveFragment;
 import com.example.boulocalix.a1click1leave.model.Employee;
@@ -29,6 +34,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonObject;
 
+import pl.droidsonroids.gif.GifImageView;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,9 +56,12 @@ public class SplashActivity extends AppCompatActivity {
             @Override
             public void run() {
                 ImageView image = findViewById(R.id.image_splash) ;
-                image.setImageResource(R.mipmap.logo_temp);
+                GifImageView gif = findViewById(R.id.video) ;
+                image.setVisibility(View.GONE);
+                gif.setVisibility(View.VISIBLE);
             }
         }, 1000);
+
 
     }
 
