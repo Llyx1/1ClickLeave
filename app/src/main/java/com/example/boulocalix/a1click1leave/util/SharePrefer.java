@@ -5,7 +5,10 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.example.boulocalix.a1click1leave.model.Employee;
+import com.example.boulocalix.a1click1leave.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+
+import java.util.List;
 
 public class SharePrefer {
 
@@ -20,9 +23,10 @@ public class SharePrefer {
     public static final String PICTURE = "Picture" ;
     public static final String BALANCE = "Balance" ;
     public static final String PHONE = "Phone" ;
-    public static final String BACKUP = "Backup" ;
+    public static final String BACKUP = "Backup";
     public static final String CLUSTER = "Cluster" ;
-    public static final String GOOGLE_CLIENT = "Client" ;
+    public static final String TOTAL_DAY_OFF = "total_day_off" ;
+    public static final String TOTAL_ANNUAL_DAY_USED = "total_annual_day_used" ;
 
     public SharePrefer(Context context) {
         mPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -68,29 +72,48 @@ public class SharePrefer {
     public void setBalance(Double balance) {
         if (balance!=null){
             mEditor.putInt(BALANCE, (int) (balance*10));
+        }else {
+            mEditor.putInt(BALANCE, 0);
         }
         mEditor.commit();
     }
 
     public void setPhone(String phone) {
-        if (phone!=null && !phone.equals("")){
+        if (phone!=null){
             mEditor.putString(PHONE, phone);
         }
         mEditor.commit();
     }
 
-    public void setBackup(String backup) {
-        if (backup!=null && !backup.equals("")){
-            mEditor.putString(BACKUP, backup);
+    public void setCluster(String cluster) {
+        if (cluster!=null && !cluster.equals("")){
+            mEditor.putString(CLUSTER, cluster);
         }
         mEditor.commit();
     }
 
-    public void setCluster(int cluster) {
-        if (cluster!=0){
-            mEditor.putInt(CLUSTER, cluster);
+    public void setTotalDayOff(Double day) {
+        if (day!=null){
+            mEditor.putInt(TOTAL_DAY_OFF, (int) (day*10));
         }
         mEditor.commit();
+    }
+
+    public void setTotalAnnualDayUsed(Double day) {
+        if (day!=null){
+            mEditor.putInt(TOTAL_ANNUAL_DAY_USED, (int) (day*10));
+        }
+        mEditor.commit();
+    }
+
+    public void setBackups(List<User> backups) {
+        String backup = null;
+        for (int i=0 ; i < backups.size(); i++) {
+            backup = backup + ", +" + backups.get(i).getFullName() ;
+        }
+        mEditor.putString(BACKUP, backup) ;
+        mEditor.commit() ;
+
     }
 
     public void setEmployee(Employee employee) {
@@ -100,10 +123,8 @@ public class SharePrefer {
         setEmail(employee.getEmail());
         setPicture(employee.getPhoto());
         setPhone(employee.getPhone());
-        setBackup(employee.getBackupBuddy());
         setBalance(employee.getBalance());
         setCluster(employee.getCluster());
-
     }
 
     public void reset() {
@@ -113,7 +134,6 @@ public class SharePrefer {
         setEmail("Unregistered");
         setPicture("https://www.rapidcitytransportinc.com/assets/global/img/avatar.png");
         setPhone("-1");
-        setBackup("None");
         setBalance(0.0);
     }
 
@@ -125,6 +145,8 @@ public class SharePrefer {
     public  Double getBalance(){return (double) (mPref.getInt(BALANCE, 0))/10;}
     public String getPhone() {return mPref.getString(PHONE, null); }
     public String getBackup() {return mPref.getString(BACKUP, null); }
-    public  int getCluster() {return mPref.getInt(CLUSTER,0);}
+    public  String getCluster() {return mPref.getString(CLUSTER,null);}
+    public Double getTotalAnnualDayUsed() {return (double) mPref.getInt(TOTAL_ANNUAL_DAY_USED, 0)/10; }
+    public Double getTotalDayOff() {return (double) mPref.getInt(TOTAL_DAY_OFF, 0)/10; }
 
 }

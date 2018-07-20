@@ -8,7 +8,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/light_grey">
+        android:background="@color/white">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -22,46 +22,57 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal"
-                android:layout_marginTop="30dp"
-                android:text="Leave Type"
-                android:textStyle="bold"
-                android:textColor="@color/dark_grey"/>
+                android:layout_marginTop="15dp"
+                android:text="1. CHOOSE LEAVE TYPE"
+                android:fontFamily="@font/notosans_bold"
+                android:textSize="14sp"
+                android:textColor="@color/dark"/>
+
             <Spinner
                 android:id="@+id/spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
                 android:drawSelectorOnTop="true"
-                android:background="@color/light_grey"
-                android:entries="@array/choice_array"
-                android:textAlignment="center"/>
+                android:background="@drawable/turn_shape"
+                android:pointerIcon="arrow"
+                android:textAlignment="center" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="2. PICK YOUR DAY(S) OFF"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:fontFamily="@font/notosans_bold"
+                android:textSize="14sp"
+                android:textColor="@color/dark"
+                android:layout_marginTop="15dp"/>
 
             <!--</LinearLayout>-->
             <com.example.boulocalix.a1click1leave.util.DateRangeCalendarView
                 android:id="@+id/calendar"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                custom:disable_date_color="#ABABAB"
-                custom:range_color="@color/grey"
-                custom:selected_date_circle_color="@color/dark_grey"
+                custom:disable_date_color="@color/light"
+                custom:range_color="@color/pink_text"
+                custom:selected_date_circle_color="@color/white"
                 android:nestedScrollingEnabled="true"
                 android:layout_gravity="center"
                 android:gravity="center"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                custom:title_color="@color/dark_grey"
-                android:background="@drawable/turn_shape"
+                android:layout_marginTop="15dp"
+                custom:title_color="@color/dark"
                 custom:text_size_date="9sp"
-                custom:text_size_title="9sp"
+                custom:text_size_title="7sp"
                 custom:text_size_week="9sp"
-                custom:selected_date_color="@color/grey">
+                custom:selected_date_color="@color/white"
+                custom:default_date_color="@color/dark">
                 <!--custom:header_bg="@drawable/calendar_header"-->
                 <!--custom:title_color="@color/calendar_header_title"-->
             </com.example.boulocalix.a1click1leave.util.DateRangeCalendarView>
@@ -77,23 +88,25 @@
                     android:layout_width="wrap_content"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="Number of day off"
-                    android:textStyle="bold"
-                    android:textColor="@color/dark_grey"
+                    android:text="3. DURATION"
+                    android:fontFamily="@font/notosans_bold"
+                    android:textSize="14sp"
+                    android:textColor="@color/dark"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:layout_margin="10dp"/>
+                    android:layout_margin="15dp"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:gravity="center">
+                    android:gravity="center"
+                    >
 
                     <Button
                         android:id="@+id/minus_zero_five"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:background="@mipmap/moins_plein"/>
 
                     <EditText
@@ -101,62 +114,31 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@color/transparent"
-                        android:textColor="@color/dark_grey"
-                        android:textSize="15sp"
+                        android:textColor="@color/dark"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/notosans_bold"
+                        android:textStyle="bold"
                         android:textAlignment="center"
                         android:inputType="numberDecimal"
-                        android:layout_marginRight="20dp"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="30dp"
                         android:numeric="decimal"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="30dp"
+                        android:layout_marginLeft="3dp"
+                        android:layout_marginTop="1dp"
+                        android:text="DAY(S)"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/notosans_regular"
+                        android:textColor="@color/dark"/>
 
                     <Button
                         android:id="@+id/plus_zero_five"
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:background="@mipmap/plus_vide"/>
                 </LinearLayout>
-
-
-
-                <!--<RadioGroup-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:orientation="horizontal"-->
-                    <!--android:gravity="center"-->
-                    <!--android:layout_gravity="center"-->
-                    <!--android:checkedButton="@null">-->
-
-                    <!--<RadioButton-->
-                        <!--android:id="@+id/minus_zero_five"-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_weight="1"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:text="0.5"-->
-                        <!--android:layout_gravity="center"-->
-                        <!--android:textColor="@color/grey"-->
-                        <!--android:gravity="center"-->
-                        <!--android:textStyle="normal"-->
-                        <!--android:button="@null"-->
-                        <!--/>-->
-
-                    <!--<View-->
-                        <!--android:layout_width="1dp"-->
-                        <!--android:layout_height="match_parent"-->
-                        <!--android:background="@color/dark_grey"-->
-                        <!--/>-->
-                    <!--<RadioButton-->
-                        <!--android:id="@+id/default_time"-->
-                        <!--android:layout_width="0dp"-->
-                        <!--android:layout_weight="1"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:text="1.0"-->
-                        <!--android:layout_gravity="center"-->
-                        <!--android:gravity="center"-->
-                        <!--android:textStyle="bold"-->
-                        <!--android:textColor="@color/dark_grey"-->
-                        <!--android:checked="true"-->
-                        <!--android:button="@null"/>-->
-                <!--</RadioGroup>-->
 
             </LinearLayout>
 
@@ -166,9 +148,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="18dp"
                 android:text="Submit"
-                android:textColor="@color/light_grey"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:fontFamily="@font/notosans_bold"
                 android:background="@drawable/button_shape"/>
 
         </LinearLayout>

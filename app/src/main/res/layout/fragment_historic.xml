@@ -11,63 +11,56 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="HISTORY"
+            android:textColor="@color/dark"
+            android:textSize="14sp"
+            android:fontFamily="@font/notosans_bold"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/light_grey">
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="10dp">
 
-            <TextView
+            <Spinner
+                android:id="@+id/leave_type_filter"
                 android:layout_width="0dp"
-                android:layout_weight="2"
+                android:layout_weight="2.5"
                 android:layout_height="match_parent"
-                android:text="Leave Type"
-                android:textColor="@color/dark_grey"
-                android:textStyle="bold"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1.1"
-                android:layout_height="match_parent"
-                android:text="From"
-                android:textColor="@color/dark_grey"
+                android:textColor="@color/green_text"
                 android:textStyle="bold"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1.1"
-                android:layout_height="match_parent"
-                android:text="To"
-                android:textColor="@color/dark_grey"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                />
-            <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1.5"
-                android:layout_height="match_parent"
-                android:text="Duration"
-                android:textColor="@color/dark_grey"
-                android:textStyle="bold"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                />
-
-            <TextView
+            <Spinner
+                android:id="@+id/status_filter"
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
                 android:layout_height="match_parent"
                 android:text="Status"
-                android:textColor="@color/dark_grey"
+                android:textColor="@color/green_text"
                 android:textStyle="bold"
-                android:layout_marginRight="10dp"
+
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:text="Duration"
+                android:textColor="@color/green_text"
+                android:fontFamily="@font/notosans_bold"
+                android:textSize="14sp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 />
@@ -77,9 +70,33 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/historic_recycler"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp">
 
         </android.support.v7.widget.RecyclerView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:visibility="gone"
+            android:background="@color/dark"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Balance"/>
+
+            <TextView
+                android:id="@+id/balance_historic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
     </LinearLayout>
 

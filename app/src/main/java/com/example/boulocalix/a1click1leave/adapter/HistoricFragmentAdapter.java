@@ -2,6 +2,8 @@ package com.example.boulocalix.a1click1leave.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,8 +14,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.boulocalix.a1click1leave.MainActivity;
 import com.example.boulocalix.a1click1leave.R;
+import com.example.boulocalix.a1click1leave.callbacks.LeaveAPICallbacks;
 import com.example.boulocalix.a1click1leave.model.Ticket;
+import com.example.boulocalix.a1click1leave.repository.LeaveRepository;
+import com.example.boulocalix.a1click1leave.util.SharePrefer;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -23,18 +29,14 @@ import java.util.TimeZone;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HistoricFragmentAdapter extends RecyclerView.Adapter<HistoricFragmentAdapter.MyViewHolder>{
+public class HistoricFragmentAdapter extends RecyclerView.Adapter<HistoricFragmentAdapter.MyViewHolder> implements LeaveAPICallbacks{
 
 
 
     private List<Ticket> ticketList;
     private Context mContext;
-    private String[] status_table = {"Pending","Cancelled", "Approved", "Bring certificate to HR"} ;
+    private String[] status_table = {"Pending","Cancelled", "Approved", "Certification required", " Over 12 days", "Over 12 days - Approved", "Failure"} ;
 
-
-
-    private int visibleThreshold = 2;
-    private int lastVisibleItem,totalItemCount;
 
     public HistoricFragmentAdapter(List<Ticket> ticketList, Context context){
         this.ticketList = ticketList ;
@@ -55,17 +57,39 @@ public class HistoricFragmentAdapter extends RecyclerView.Adapter<HistoricFragme
             final MyViewHolder holder = (MyViewHolder)mholder;
             final Ticket ticket = ticketList.get(position);
             if(ticket !=null) {
+                if (ticket.getStartDate()!=null) {
                 holder.reasonTv.setText(ticket.getReason());
-                holder.startTv.setText(ticket.getStartDate());
-                holder.endTv.setText(ticket.getEndDate());
-                holder.numberOfDayTv.setText(Double.toString(ticket.getNumberOfDay()));
-                holder.status.setText(status_table[ticket.getStatus()-1]) ;
+                holder.startTv.setText(ticket.getStartDate().replaceAll("-", "/"));
+                holder.endTv.setText(ticket.getEndDate().replaceAll("-", "/"));
+                holder.numberOfDayTv.setText("-" + Double.toString(ticket.getNumberOfDay()));
+                try {
+                    holder.status.setText(status_table[ticket.getStatus() - 1]);
+                }catch (ArrayIndexOutOfBoundsException e) {
+                    holder.status.setText(Integer.toString(ticket.getStatus()));
+                    //TODO if that thing appears change the status array of this file and the string file according to the database
+                }
+                holder.dateHitory.setVisibility(View.VISIBLE);
+                if(ticket.getStatus()==3) {
+                    holder.status.setTextColor(0xFF46C4C2) ;
+                    holder.status.setTypeface(null, Typeface.BOLD);
+                }else {
+                    holder.status.setTextColor(0xFF424242) ;
+                    holder.status.setTypeface(null, Typeface.NORMAL);
+                }
                 holder.itemLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         handleOnClickItem(ticket, holder);
                     }
-                });
+                });}
+                else {
+                    holder.reasonTv.setText("Allocate");
+                    holder.numberOfDayTv.setText(Double.toString(ticket.getNumberOfDay()));
+                    holder.status.setTextColor(0xFF46C4C2) ;
+                    holder.status.setTypeface(null, Typeface.BOLD);
+                    holder.status.setText("Approved");
+                    holder.dateHitory.setVisibility(View.INVISIBLE);
+                }
             }
 
 
@@ -80,16 +104,18 @@ public class HistoricFragmentAdapter extends RecyclerView.Adapter<HistoricFragme
         Calendar calendar = new GregorianCalendar(2000+year,month-1,day);
         Calendar currentDate = GregorianCalendar.getInstance(TimeZone.getDefault());
         calendar.add(Calendar.DAY_OF_MONTH, 1);
-        if (currentDate.get(Calendar.YEAR)<calendar.get(Calendar.YEAR)) {
-            showCancelDialog(holder);
-        }
-        if (calendar.get(Calendar.YEAR)== currentDate.get(Calendar.YEAR)&& currentDate.get(Calendar.DAY_OF_YEAR)<= calendar.get(Calendar.DAY_OF_YEAR)){
-            showCancelDialog(holder);
+        if (ticket.getStatus() != 2) {
+            if (currentDate.get(Calendar.YEAR) < calendar.get(Calendar.YEAR)) {
+                showCancelDialog(holder, ticket);
+            }
+            if (calendar.get(Calendar.YEAR) == currentDate.get(Calendar.YEAR) && currentDate.get(Calendar.DAY_OF_YEAR) <= calendar.get(Calendar.DAY_OF_YEAR)) {
+                showCancelDialog(holder, ticket);
+            }
         }
 
     }
 
-    private void showCancelDialog(MyViewHolder holder) {
+    private void showCancelDialog(MyViewHolder holder, final Ticket ticket) {
         final MyViewHolder holderF = holder ;
         final Dialog dialog = new Dialog(mContext);
         dialog.setContentView(R.layout.pop_cancel_leave);
@@ -100,7 +126,7 @@ public class HistoricFragmentAdapter extends RecyclerView.Adapter<HistoricFragme
             @Override
             public void onClick(View v) {
                 holderF.status.setText("Cancelled");
-                //TODO send cancel reauest to API
+                deleteALeave(ticket);
                 dialog.dismiss();
             }
         });
@@ -115,9 +141,17 @@ public class HistoricFragmentAdapter extends RecyclerView.Adapter<HistoricFragme
         dialog.show();
     }
 
-    private Bundle putDataIntoBundle(Bundle bundle, Ticket ticket) {
-
-        return bundle;
+    private void deleteALeave(Ticket ticket) {
+        LeaveRepository.getInstance(mContext).deleteLeaveRequest(this,ticket.getId());
+        SharePrefer sharePrefer =  new SharePrefer(mContext) ;
+        sharePrefer.setTotalDayOff(sharePrefer.getTotalDayOff()-ticket.getNumberOfDay());
+        if (ticket.getReason().equals("Annual leave")) {
+            sharePrefer.setBalance(sharePrefer.getBalance()+ticket.getNumberOfDay());
+            sharePrefer.setTotalAnnualDayUsed(sharePrefer.getTotalAnnualDayUsed()-ticket.getNumberOfDay());
+        }
+        if (mContext instanceof MainActivity) {
+            ((MainActivity) mContext).updateBalance();
+        }
     }
 
     @Override
@@ -140,10 +174,22 @@ public class HistoricFragmentAdapter extends RecyclerView.Adapter<HistoricFragme
         TextView status ;
         @BindView(R.id.leave_ticket)
         LinearLayout itemLayout ;
+        @BindView(R.id.date_history)
+        LinearLayout dateHitory ;
 
         public MyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView) ;
         }
+    }
+
+    @Override
+    public void onContactDatabaseSuccess(Object data) {
+
+    }
+
+    @Override
+    public void onCreateDatabaseError(String mess) {
+
     }
 }

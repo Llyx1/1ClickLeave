@@ -4,87 +4,331 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".fragment.SettingsFragment">
+    tools:context=".fragment.ProfileFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="10dp"
+        android:paddingBottom="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/background_image_view"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:background="@mipmap/background_profile"/>
+
+            <ImageView
+                android:id="@+id/profile_picture"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:layout_centerVertical="true"
+                android:layout_below="@+id/background_image_view"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="-55dp"
+                android:background="@drawable/cerclebackground"
+                android:padding="2dp"
+                />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/user_fullname"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textColor="@color/dark"
+            android:fontFamily="@font/notosans_bold"
+            android:textSize="14sp"
+            android:textAllCaps="true"
+            android:layout_margin="14dp"/>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="30dp">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
 
-        <GridLayout
+        <TextView
+            android:id="@+id/profile_total_day_off"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="26sp"
+            android:textColor="@color/midtone"
+            android:fontFamily="@font/notosans_bold"
+            android:text="0.0"/>
+        <TextView
+            android:id="@+id/profile_remaining_day"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="26sp"
+            android:textColor="@color/midtone"
+            android:fontFamily="@font/notosans_bold"
+            android:text="0.0"/>
+        <TextView
+            android:id="@+id/profile_total_annual_leave"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:textSize="26sp"
+            android:textColor="@color/midtone"
+            android:fontFamily="@font/notosans_bold"
+            android:text="0.0"/>
+    </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:rowCount="4"
+            android:layout_margin="10dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Days left in\ntotal"
+                android:textSize="12sp"
+                android:textColor="@color/midtone"
+                android:fontFamily="@font/notosans_regular"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Balanced annual leave"
+                android:textSize="12sp"
+                android:textColor="@color/midtone"
+                android:fontFamily="@font/notosans_regular"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Annual leave\nused"
+                android:textSize="12sp"
+                android:textColor="@color/midtone"
+                android:fontFamily="@font/notosans_regular"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp">
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="1dp"
+                android:background="@color/midtone"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PROFILE"
+                android:textSize="16sp"
+                android:textColor="@color/midtone"
+                android:fontFamily="@font/notosans_bold"/>
+
+            <View
+                android:layout_width="20dp"
+                android:layout_height="1dp"
+                android:background="@color/midtone"
+                android:layout_margin="10dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:useDefaultMargins="true"
-            >
-            <TextView
-                android:layout_width="0dp"
-                android:layout_columnWeight="5"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="Name"/>
-            <TextView
-                android:id="@+id/user_fullname"
-                android:layout_columnWeight="5"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="Name"/>
+            android:layout_marginLeft="20dp">
+
 
             <TextView
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="5"
+                android:layout_weight="1"
                 android:layout_width="0dp"
-                android:textSize="18sp"
+                android:textSize="14sp"
+                android:textColor="@color/midtone"
+                android:fontFamily="@font/notosans_regular"
                 android:text="Phone number"/>
 
             <TextView
                 android:id="@+id/user_phone"
-                android:layout_columnWeight="5"
+                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
+                android:textSize="14sp"
+                android:textColor="@color/midtone"
+                android:fontFamily="@font/notosans_regular"
+                android:background="@android:color/transparent"/>
+
+            <EditText
+                android:id="@+id/user_phone_edit"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textColor="@color/midtone"
+                android:fontFamily="@font/notosans_regular"
                 android:hint="Phone number"
-                android:background="@android:color/transparent"/>
+                android:visibility="gone"
+                android:lines="1"
+                android:numeric="integer"
+                android:imeOptions="actionDone"
+                android:layout_marginRight="20dp"
+                 />
 
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:useDefaultMargins="true"
+            android:layout_marginLeft="20dp">
 
 
             <TextView
-                android:layout_columnWeight="5"
-                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:text="Backup "/>
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:textSize="14sp"
+                android:textColor="@color/midtone"
+                android:fontFamily="@font/notosans_regular"
+                android:text="Cluster"/>
 
             <TextView
-                android:id="@+id/user_backup"
-                android:layout_columnWeight="5"
+                android:id="@+id/user_cluster"
+                android:layout_weight="1"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:hint="Your backup "
+                android:textSize="14sp"
+                android:textColor="@color/midtone"
+                android:fontFamily="@font/notosans_regular"
                 android:background="@android:color/transparent"/>
 
-        </GridLayout>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:useDefaultMargins="true"
+            android:layout_marginLeft="20dp">
 
-        <View
+            <TextView
+                android:id="@+id/backup_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="14sp"
+                android:textColor="@color/midtone"
+                android:fontFamily="@font/notosans_regular"
+                android:text="Backups"/>
+
+            <LinearLayout
+                android:id="@+id/backupList"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"/>
+
+            <LinearLayout
+                android:id="@+id/backupListEdit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="gone"
+                android:layout_marginRight="20dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/plus_one_backup"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:background="@mipmap/plus_plein"/>
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/logout"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:paddingLeft="25dp"
+                android:layout_marginTop="17dp"
+                android:text="LOG OUT"
+                android:fontFamily="@font/notosans_bold"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/log_out_button"/>
+        <Button
             android:id="@+id/edit"
-            android:layout_width="40dp"
+            android:layout_width="100dp"
             android:layout_height="40dp"
-            android:foreground="@mipmap/edit"
-            android:layout_gravity="end"
-            android:layout_margin="10dp"
-            />
+            android:text="EDIT"
+            android:textSize="12sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="17dp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/notosans_bold"
+            android:layout_gravity="center"
+            android:background="@drawable/button_shape"/>
+
+        <Button
+            android:id="@+id/save_edit"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="17dp"
+            android:layout_marginBottom="20dp"
+            android:text="SAVE"
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/notosans_bold"
+            android:layout_gravity="center"
+            android:background="@drawable/button_shape"
+            android:visibility="gone"/>
+    </LinearLayout>
 
     </LinearLayout>
 
-
+    </ScrollView>
 
 </FrameLayout>

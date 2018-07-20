@@ -1,74 +1,72 @@
 package com.example.boulocalix.a1click1leave;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.Dialog;
-import android.content.ClipData;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
+import android.support.design.internal.BottomNavigationItemView;
+import android.support.design.internal.BottomNavigationMenuView;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
-import android.view.ActionProvider;
-import android.view.ContextMenu;
-import android.view.SubMenu;
-import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.AbsoluteSizeSpan;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
+import android.text.style.TextAppearanceSpan;
+import android.text.style.TypefaceSpan;
+import android.util.Log;
+import android.view.View;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.example.boulocalix.a1click1leave.callbacks.LeaveAPICallbacks;
+import com.example.boulocalix.a1click1leave.fragment.ChooseBackup;
 import com.example.boulocalix.a1click1leave.fragment.FirstSignInFragment;
 import com.example.boulocalix.a1click1leave.fragment.HistoricFragment;
-import com.example.boulocalix.a1click1leave.fragment.HomePageFragment;
-import com.example.boulocalix.a1click1leave.fragment.SettingsFragment;
+import com.example.boulocalix.a1click1leave.fragment.ProfileFragment;
 import com.example.boulocalix.a1click1leave.fragment.SubmitALeaveFragment;
 import com.example.boulocalix.a1click1leave.callbacks.onFragmentToMainCallbacks;
 import com.example.boulocalix.a1click1leave.model.Employee;
 import com.example.boulocalix.a1click1leave.model.GoogleClient;
-import com.example.boulocalix.a1click1leave.model.LeaveTicket;
 import com.example.boulocalix.a1click1leave.model.LeaveTypeDto;
+import com.example.boulocalix.a1click1leave.model.User;
 import com.example.boulocalix.a1click1leave.repository.LeaveRepository;
-import com.example.boulocalix.a1click1leave.util.ApiClient;
-import com.example.boulocalix.a1click1leave.util.ApiInterface;
 
+import com.example.boulocalix.a1click1leave.util.BottomNavigationViewEx;
 import com.example.boulocalix.a1click1leave.util.GenerateLeaveRequestUtil;
 import com.example.boulocalix.a1click1leave.util.SharePrefer;
-import com.example.boulocalix.a1click1leave.util.UpdateNavHeaderUtil;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.plus.PlusShare;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.gson.JsonObject;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+import butterknife.BindView;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-        onFragmentToMainCallbacks, View.OnClickListener, LeaveAPICallbacks{
+import static android.text.Layout.JUSTIFICATION_MODE_INTER_WORD;
+
+public class MainActivity extends AppCompatActivity implements onFragmentToMainCallbacks, View.OnClickListener, LeaveAPICallbacks{
 
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "HttpRequest";
@@ -78,39 +76,110 @@ public class MainActivity extends AppCompatActivity
     Employee employee ;
     Fragment fragment;
     SharePrefer sharePrefer;
-    LinearLayout navHeader;
-    MenuItem balance ;
+    TextView balance ;
+    TextView userName ;
     List<String> leaveTips ;
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener ;
+    private BottomNavigationViewEx bottomNavigationView ;
+    RelativeLayout mTopToolbar ;
+    String gift ;
+    String thanks ;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
+        setContentView(R.layout.content_main);
         sharePrefer = new SharePrefer(this);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
         myDialogConfirm = new Dialog(this) ;
         fragmentManager = getSupportFragmentManager() ;
-//        UpdateNavHeaderUtil.updateUI(navHeader, getApplicationContext());
+        bottomNavigationView = findViewById(R.id.navigation) ;
+        balance = findViewById(R.id.balance_toolbar) ;
+        userName = findViewById(R.id.user_name_toolbar);
+        mOnNavigationItemSelectedListener  = new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                switch (item.getItemId()) {
+                    case R.id.navigation_submit_a_leave:
+                        mTopToolbar.setVisibility(View.VISIBLE);
+                        fragment = SubmitALeaveFragment.newInstance() ;
+                        ft.replace(R.id.fragment_holder, fragment, "LeaveRequestFragment");
+                        ft.addToBackStack("LeaveRequestFragment");
+                        ft.commitAllowingStateLoss();
+                            return true;
+
+                    case R.id.navigation_historic:
+                        mTopToolbar.setVisibility(View.GONE);
+                        fragment = HistoricFragment.newInstance() ;
+                        ft.replace(R.id.fragment_holder, fragment, "HistoryFragment");
+                        ft.addToBackStack("HistoryFragment");
+                        ft.commitAllowingStateLoss();
+                            return true;
+
+                    case R.id.navigation_profile:
+                        mTopToolbar.setVisibility(View.GONE);
+                        fragment = ProfileFragment.newInstance() ;
+                        ft.replace(R.id.fragment_holder, fragment, "ProfileFragment");
+                        ft.addToBackStack("ProfileFragment");
+                        ft.commitAllowingStateLoss();
+                             return true;
+                }
+                return false;
+            }
+        };
+        bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        removeShiftMode(bottomNavigationView);
+        bottomNavigationView.enableItemShiftingMode(false);
+        bottomNavigationView.setTextVisibility(false);
+        mTopToolbar = (RelativeLayout) findViewById(R.id.toolbar);
         Intent intent = getIntent() ;
         if (intent.getBooleanExtra("connexion", false)) {
-            fragment = SubmitALeaveFragment.newInstance();
-            fragmentManager.beginTransaction().replace(R.id.fragment_holder,fragment).commit();
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            fragment = SubmitALeaveFragment.newInstance() ;
+            ft.replace(R.id.fragment_holder, fragment, "LeaveRequestFragment");
+            ft.addToBackStack("LeaveRequestFragment");
+            ft.commitAllowingStateLoss();
+            mTopToolbar.setVisibility(View.VISIBLE);
         } else {
+            bottomNavigationView.setVisibility(View.GONE);
+            mTopToolbar.setVisibility(View.GONE);
             fragment = FirstSignInFragment.newInstance();
             fragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment).commit();
         }
         LeaveRepository.getInstance(getApplicationContext()).leaveTypeParams(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LeaveRepository.getInstance(this).getBackup(this);
+        balance.setText(sharePrefer.getBalance().toString());
+        userName.setText(sharePrefer.getFullName());
+    }
+
+    @SuppressLint("RestrictedApi")
+    public static void removeShiftMode(BottomNavigationView view) {
+        BottomNavigationMenuView menuView = (BottomNavigationMenuView) view.getChildAt(0);
+        try {
+            Field shiftingMode = menuView.getClass().getDeclaredField("mShiftingMode");
+            shiftingMode.setAccessible(true);
+            shiftingMode.setBoolean(menuView, false);
+            shiftingMode.setAccessible(false);
+            for (int i = 0; i < menuView.getChildCount(); i++) {
+                BottomNavigationItemView item = (BottomNavigationItemView) menuView.getChildAt(i);
+                //noinspection RestrictedApi
+                item.setShiftingMode(false);
+                // set once again checked value, so view will be updated
+                //noinspection RestrictedApi
+                item.setChecked(item.getItemData().isChecked());
+            }
+        } catch (NoSuchFieldException e) {
+            Log.e("BottomNav", "Unable to get shift mode field", e);
+        } catch (IllegalAccessException e) {
+            Log.e("BottomNav", "Unable to change value of shift mode", e);
+        }
     }
 
     public void signOut() {
@@ -122,7 +191,7 @@ public class MainActivity extends AppCompatActivity
                     public void onComplete(@NonNull Task<Void> task) {
                         GoogleClient.destroy() ;
                         sharePrefer.reset() ;
-                        UpdateNavHeaderUtil.updateUI(navHeader, getApplicationContext());
+                        //TODO update ProfileFragment
                     }
                 });
     }
@@ -130,141 +199,32 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.nav_header:
-                if (sharePrefer.getAccessToken() != null) {
-                    fragment = SettingsFragment.newInstance();
-                    fragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment).commit();
-                }
-                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-                drawer.closeDrawer(GravityCompat.START);
-                break;
+//            case R.id.nav_header:
+//                if (sharePrefer.getAccessToken() != null) {
+//                    fragment = ProfileFragment.newInstance();
+//                    fragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment).commit();
+//                }
+//                DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//                drawer.closeDrawer(GravityCompat.START);
+//                break;
         }
     }
 
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        navHeader = findViewById(R.id.nav_header);
-        navHeader.setOnClickListener(this);
-        UpdateNavHeaderUtil.updateUI(navHeader, getApplicationContext());
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.clear();
-        menu.add(0, 0, Menu.NONE, sharePrefer.getBalance().toString()).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        balance = menu.getItem(0) ;
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        Class fragmentClass = null;
-        if (sharePrefer.getAccessToken() != null) {
-            if (id == R.id.nav_submit_leave) {
-                fragmentClass = SubmitALeaveFragment.class ;
-            } else if (id == R.id.nav_history) {
-                fragmentClass = HistoricFragment.class ;
-            } else if (id == R.id.nav_reward) {
-
-            } else if (id == R.id.nav_personnal_information) {
-                Snackbar snackbar = Snackbar
-                        .make(findViewById(R.id.nav_header), "Disconnect", Snackbar.LENGTH_LONG)
-                        .setAction("Yes", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                signOut();
-                                fragment = FirstSignInFragment.newInstance();
-                                fragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment).commit();
-                            }
-                        });
-
-                snackbar.show();
-            } else if (id == R.id.nav_home_page) {
-                fragmentClass = HomePageFragment.class ;
-            }
-            try {
-                fragment = (Fragment) fragmentClass.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (fragment!=null) {
-            fragmentManager = getSupportFragmentManager() ;
-            fragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment).commit();
-            }
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
     @Override
     public void onFragmentToMainCallbacks(String sender,final ArrayList<String> info) {
         if (sender.equals("SubmitALeaveFragment")) {
-            final double dayOff = Double.parseDouble(info.get(0)) ; // update the database with that information
-            String[] answer = getResources().getStringArray(R.array.answer_to_leave) ;
-            int[] pictureId = {
-                    R.mipmap.hollidays,
-                    R.mipmap.hollidays,
-                    R.mipmap.sickness,
-                    R.mipmap.baby,
-                    R.mipmap.baby,
-                    R.mipmap.funeral,
-                    R.mipmap.funeral,
-                    R.mipmap.wedding,
-                    R.mipmap.wedding,
-                    R.mipmap.working_from_home,
-            } ;
             myDialogConfirm.setContentView(R.layout.pop_up_leave_recap);
-            TextView txtclose =(TextView) myDialogConfirm.findViewById(R.id.txtclose);
-            TextView leavingDate = myDialogConfirm.findViewById(R.id.day_leave_pop) ;
-            TextView returnDate = myDialogConfirm. findViewById(R.id.day_return_pop) ;
-            ImageView image = myDialogConfirm.findViewById(R.id.image_pop) ;
-            final Button returnBtn = myDialogConfirm.findViewById(R.id.correct) ;
-            Button confirm = myDialogConfirm.findViewById(R.id.confirm) ;
-            TextView HRAnswer = myDialogConfirm.findViewById(R.id.hr_answer_pop) ;
-            if (!info.get(1).equals(info.get(2))) {
-                leavingDate.setText(info.get(1));
-                returnDate.setText(info.get(2));
-            } else {
-                myDialogConfirm.findViewById(R.id.optionnal_recap).setVisibility(View.GONE);
+            myDialogConfirm.setCancelable(false);
+            myDialogConfirm.setCanceledOnTouchOutside(false);
+            TextView text = myDialogConfirm.findViewById(R.id.text_pop_up_confirm) ;
+            text.setText(setTextPopUp(info));
+            if (Build.VERSION.SDK_INT >= 26) {
+                text.setJustificationMode(JUSTIFICATION_MODE_INTER_WORD);
             }
-            final int spinnerPosition = Integer.parseInt(info.get(3)) ;
-            image.setImageResource(pictureId[spinnerPosition]);
-            HRAnswer.setText(leaveTips.get(spinnerPosition));
-            txtclose.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    returnBTN() ;
-                }
-            });
+            final Button returnBtn = myDialogConfirm.findViewById(R.id.correct) ;
+            final Button confirm = myDialogConfirm.findViewById(R.id.confirm) ;
+            final MainActivity main = this ;
             returnBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -274,48 +234,129 @@ public class MainActivity extends AppCompatActivity
             confirm.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    GenerateLeaveRequestUtil generateLeaveRequestUtil = new GenerateLeaveRequestUtil(getApplicationContext()) ;
+                    confirm.setOnClickListener(null);
+                    returnBtn.setOnClickListener(null);
+                    GenerateLeaveRequestUtil generateLeaveRequestUtil = new GenerateLeaveRequestUtil(getApplicationContext(), main) ;
                     generateLeaveRequestUtil.createAppropriateLeaveRequest(info);
-                    balance.setTitle(sharePrefer.getBalance().toString()) ;
-                    thankYouGiftDialog();
+                    balance.setText(sharePrefer.getBalance().toString()) ;
                 }
             });
             myDialogConfirm.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             myDialogConfirm.show();
         }else if (sender.equals("SignIn")) {
+            bottomNavigationView.setVisibility(View.VISIBLE);
+            mTopToolbar.setVisibility(View.VISIBLE);
             SubmitALeaveFragment submitALeaveFragment = SubmitALeaveFragment.newInstance();
             fragmentManager.beginTransaction().replace(R.id.fragment_holder, submitALeaveFragment).commit();
-            UpdateNavHeaderUtil.updateUI(navHeader, getApplicationContext());
+            bottomNavigationView.setSelectedItemId(R.id.navigation_submit_a_leave);
+            balance.setText(sharePrefer.getBalance().toString());
+            userName.setText(sharePrefer.getFullName());
+
 
         }else if (sender.equals("settings")) {
-            if (info == null) {
-                SettingsFragment settingsFragment = (SettingsFragment) fragment ;
-                settingsFragment.onMainToFragmentCallbacks(employee) ;
-            }
+            signOut();
+            bottomNavigationView.setVisibility(View.GONE);
+            fragment = FirstSignInFragment.newInstance();
+            fragmentManager.beginTransaction().replace(R.id.fragment_holder, fragment).commit();
+            mTopToolbar.setVisibility(View.GONE);
+
         }
+    }
+
+    private SpannableStringBuilder setTextPopUp(ArrayList<String> info) {
+        ForegroundColorSpan pink = new ForegroundColorSpan(Color.RED) ;
+        SpannableStringBuilder SS ;
+        String content1, content2, content3, content4;
+        if (info.get(1).equals(info.get(2))) {
+            content1 = "You have just created a " ;
+            content2 = info.get(0) ;
+            content3 = "-day leave request on " ;
+            content4 = info.get(1) ;
+            String content5 = ". Please, confirm to continue." ;
+            SS = new SpannableStringBuilder(content1 + content2+content3+content4+content5);
+        }else {
+            content1 = "You have just created a leave request for ";
+            content2 = info.get(0) ;
+            content3 = " days from " ;
+            content4 = info.get(1) ;
+            String content5 = " to " ;
+            String content6 = info.get(2) ;
+            String content7 = ". Please, confirm to continue." ;
+            String content8 ;
+            if (Double.parseDouble(info.get(0)) > 12.0) {
+                content8 = "\nYou will need to meet HR to have the approval of that leave request." ;
+            } else {
+                content8 = "" ;
+            }
+            SS = new SpannableStringBuilder(content1 + content2+content3+content4+content5+content6+content7+content8);
+            SS.setSpan(new StyleSpan(Typeface.BOLD),
+                    content1.length()+content2.length()+content3.length()+content4.length()+content5.length(),
+                    content1.length()+content2.length()+content3.length()+content4.length()+content5.length()+content6.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE );
+        }
+        SS.setSpan(pink,
+                content1.length(),
+                content1.length()+content2.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE );
+        SS.setSpan(new StyleSpan(Typeface.BOLD),
+                content1.length(),
+                content1.length()+content2.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE );
+        SS.setSpan(new StyleSpan(Typeface.BOLD),
+                content1.length()+content2.length()+content3.length(),
+                content1.length()+content2.length()+content3.length()+content4.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE );
+
+        return SS;
     }
 
     public void returnBTN() {
         myDialogConfirm.dismiss();
     }
 
-    public void returnHomePage(){
+    public void returnHistoricLeavePage(){
+        //TODO to be change to another fragment
         myDialogConfirm.dismiss();
-        HomePageFragment homePageFragment = HomePageFragment.newInstance();
-        fragmentManager.beginTransaction().replace(R.id.fragment_holder, homePageFragment).commit();
+         HistoricFragment historicFragment = HistoricFragment.newInstance();
+        fragmentManager.beginTransaction().replace(R.id.fragment_holder, historicFragment).commit();
     }
 
-    public void thankYouGiftDialog() {
+    public void thankYouGiftDialog(String gift, String thanks,String tips) {
         myDialogConfirm.setContentView(R.layout.pop_up_share_gift);
+        myDialogConfirm.setCanceledOnTouchOutside(false);
+        myDialogConfirm.setCancelable(false);
+        TextView thanksTV = myDialogConfirm.findViewById(R.id.thank_you_message) ;
+        ImageView giftIV = myDialogConfirm.findViewById(R.id.gift_picture) ;
+        TextView giftTV = myDialogConfirm.findViewById(R.id.gift_message) ;
+        TextView tipsTV = myDialogConfirm.findViewById(R.id.gift_tips) ;
+        thanksTV.setText(thanks);
+        if (gift == null) {
+            giftIV.setVisibility(View.GONE);
+            giftTV.setVisibility(View.GONE);
+        }else {
+            giftIV.setVisibility(View.VISIBLE);
+            giftTV.setVisibility(View.VISIBLE);
+            giftTV.setText("Here a " + gift + " for you ! Please contact HR to claim it.");
+        }
+        tipsTV.setText(tips);
         final Button returnHomePage = myDialogConfirm.findViewById(R.id.return_hp);
         Button share = myDialogConfirm.findViewById(R.id.share_gg_plus);
+        String text =  "Hello Offies, \nI'll work from home today for my private reasons. For urgent cases, please call me directly " ;
+        if (sharePrefer.getPhone() != null || !sharePrefer.getPhone().equals("")) {
+            text = text + "at " + sharePrefer.getPhone() + ", ";
+        }
+        text = text + "leave a message on Hangout or skype" ;
+        if (sharePrefer.getBackup() != null) {
+            text = text + " or contact my backup(s)" + sharePrefer.getBackup() ;
+        }
+        text = text + "." ;
+        final String textFinal = text ;
         share.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent shareIntent = new PlusShare.Builder(getApplicationContext())
                         .setType("text/plain")
-                        .setText("Hello Offies, \n" +
-                                "I'll work from home today for my private reasons. For urgent cases, please call me directly or leave message on Hangout or skype.")
+                        .setText(textFinal)
                         .setContentUrl(Uri.parse("https://plus.google.com/u/0/communities/114247689785052683839"))
                         .getIntent();
 
@@ -325,7 +366,7 @@ public class MainActivity extends AppCompatActivity
         returnHomePage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                returnHomePage() ;
+                returnHistoricLeavePage() ;
             }
         });
     }
@@ -343,5 +384,47 @@ public class MainActivity extends AppCompatActivity
                 leaveTips.add(((LeaveTypeDto) data).type.get(0).tips);
             }
         }
+
+        if (data instanceof List) {
+            if (((List) data).size()>0 && ((List) data).get(0) instanceof User) {
+                sharePrefer.setBackups((List<User>) data);
+            }
+        }
     }
+
+    public void setNewBackup(User employee) {
+        ((ProfileFragment) fragment).onMainToFragmentCallbacks(employee) ;
+    }
+
+    public void popPreviousFragmentWithoutReload() {
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack();
+        }
+    }
+
+    public void pushChooseBackupFragment(List<User> backups) {
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ChooseBackup chooseBackup = ChooseBackup.newInstance(backups) ;
+        ft.replace(R.id.fragment_holder, chooseBackup, "ChooseBackup");
+        ft.addToBackStack("ChooseBackup");
+        ft.commitAllowingStateLoss();
+    }
+
+    public void setBottomNavigationViewSelectedItem(int id) {
+        if (bottomNavigationView.getSelectedItemId() != id) {
+            bottomNavigationView.setSelectedItemId(id);
+        }
+    }
+
+    public void updateBalance() {
+        balance.setText(sharePrefer.getBalance().toString());
+        if (fragment instanceof HistoricFragment) {
+            ((HistoricFragment) fragment).onMainToFragmentCallbacks(null);
+        }
+    }
+
+    public void failSubmitleave() {
+        myDialogConfirm.dismiss();
+    }
+
 }

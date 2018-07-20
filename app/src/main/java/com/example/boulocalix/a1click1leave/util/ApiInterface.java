@@ -1,15 +1,20 @@
 package com.example.boulocalix.a1click1leave.util;
 
+import com.example.boulocalix.a1click1leave.model.Backup;
 import com.example.boulocalix.a1click1leave.model.Employee;
 import com.example.boulocalix.a1click1leave.model.LeaveTicket;
 import com.example.boulocalix.a1click1leave.model.LeaveTypeDto;
+import com.example.boulocalix.a1click1leave.model.Phone;
+import com.example.boulocalix.a1click1leave.model.SubmitTicket;
 import com.example.boulocalix.a1click1leave.model.Ticket;
 import com.example.boulocalix.a1click1leave.model.User;
 import com.google.gson.JsonObject;
 
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -18,9 +23,13 @@ import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface ApiInterface {
-    @GET("offyusers/")
-    Call<List<Employee>> getAllEmployees();
+    @Headers("Accept: application/json")
+    @GET("offyusers")
+    Call<List<User>> getAllEmployees(@Header("Authorization") String token);
 
+    @Headers("Accept: application/json")
+    @GET("offyusers/{id}")
+    Call<Employee> getRequestedEmployee(@Header("Authorization") String token, @Path("id") int id);
 
     @Headers("Accept: application/json")
     @GET("loginGoogle/{gmail}")
@@ -33,23 +42,34 @@ public interface ApiInterface {
 
     @Headers("Content-type: application/json")
     @POST("submitPhone")
-    Call<User> submitPhone(@Header("Authorization") String token, @Body JsonObject phone) ;
-
-    @Headers("Content-type: application/json")
-    @POST("submitBackup")
-    Call<User> submitBackup(@Header("Authorization") String token, @Body JsonObject backup) ;
+    Call<User> submitPhone(@Header("Authorization") String token, @Body Phone phone) ;
 
     @Headers("Content-type: application/json")
     @POST("submitLeaveTicket")
-    Call<LeaveTicket> submitLeaveRequest(@Header("Authorization") String token, @Body Ticket leaveRequest) ;
+    Call<LeaveTicket> submitLeaveRequest(@Header("Authorization") String token, @Body SubmitTicket leaveRequest) ;
 
     @Headers("Accept: application/json")
-    @GET("leaveHistoryOfUser/{id}")
-    Call<List<Ticket>> getUserHistoric(@Header("Authorization") String token, @Path("id") int id) ;
+    @GET("leaveHistoryOfUser")
+    Call<List<Ticket>> getUserHistoric(@Header("Authorization") String token) ;
 
     @Headers("Accept: application/json")
     @GET("getLeaveTypeParams")
     Call<LeaveTypeDto> getLeaveTypeParams(@Header("Authorization") String token) ;
 
+    @Headers("Accept: application/json")
+    @GET("deleteBackupBuddy/{backup_buddy_id_delete}")
+    Call<ResponseBody> deleteBackups(@Header("Authorization") String token, @Path("backup_buddy_id_delete") int id) ;
+
+    @Headers("Accept: application/json")
+    @GET("cancelLeave/{id}")
+    Call<ResponseBody> deleteLeave(@Header("Authorization") String token, @Path("id") int id) ;
+
+    @Headers("Accept: application/json")
+    @GET("getBackupBuddyById")
+    Call<List<Backup>> getBackups(@Header("Authorization") String token) ;
+
+    @Headers("Accept: application/json")
+    @POST("submitBackupBuddyById")
+    Call<ResponseBody> submitOneBackup(@Header("Authorization") String token, @Body Backup backup) ;
 
 }

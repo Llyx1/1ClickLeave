@@ -1,6 +1,7 @@
 package com.example.boulocalix.a1click1leave.callbacks;
 
 import com.example.boulocalix.a1click1leave.model.Employee;
+import com.example.boulocalix.a1click1leave.model.User;
 
 import java.util.ArrayList;
 
@@ -9,5 +10,5 @@ import java.util.ArrayList;
  */
 
 public interface onMainToFragmentCallbacks {
-    void onMainToFragmentCallbacks(Employee employee) ;
+    void onMainToFragmentCallbacks(User user) ;
 }

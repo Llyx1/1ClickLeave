@@ -1,11 +1,14 @@
 package com.example.boulocalix.a1click1leave;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.boulocalix.a1click1leave.fragment.SubmitALeaveFragment;
@@ -14,12 +17,14 @@ import com.example.boulocalix.a1click1leave.util.ApiClient;
 import com.example.boulocalix.a1click1leave.util.ApiInterface;
 import com.example.boulocalix.a1click1leave.util.SharePrefer;
 import com.example.boulocalix.a1click1leave.model.GoogleClient;
-import com.example.boulocalix.a1click1leave.util.UpdateNavHeaderUtil;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonObject;
@@ -41,6 +46,25 @@ public class SplashActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         sharePrefer = new SharePrefer(this);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ImageView image = findViewById(R.id.image_splash) ;
+                image.setImageResource(R.mipmap.logo_temp);
+            }
+        }, 1000);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance() ;
+        int result = googleApiAvailability.isGooglePlayServicesAvailable(this) ;
+        if (result != ConnectionResult.SUCCESS) {
+            Dialog dialog = googleApiAvailability.getErrorDialog(this, result, result) ;
+        }
+
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("827349712490-u8rt9aemhfguugbnv897a1d6utn2dgai.apps.googleusercontent.com")
                 .requestEmail()
@@ -72,22 +96,33 @@ public class SplashActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Your address is not part of our database, are you using your offy address ?", Toast.LENGTH_LONG).show();
                         signOut();
                         callMain(false);
+                    } else {
+                        sharePrefer.setEmployee(employee);
+                        sharePrefer.setPicture(mGoogleSignInAccount.getPhotoUrl().toString());
+                        callMain(true);
                     }
-                    sharePrefer.setEmployee(employee);
-                    sharePrefer.setPicture(mGoogleSignInAccount.getPhotoUrl().toString());
-                    callMain(true) ;
                 }
 
                 @Override
                 public void onFailure(Call<Employee> call, Throwable t) {
                     // Log error here since request failed
                     Log.e("Json error", t.toString());
+                    Toast.makeText(getApplicationContext(), t.toString(), Toast.LENGTH_LONG).show();
                     callMain(false);
                 }
             });
         } catch (ApiException e) {
             if (e.getStatusCode() == 4) {
-                signIn();
+                if (e instanceof ResolvableApiException) {
+//                    ((ResolvableApiException) e).getResolution() ;
+                    try {
+                        ((ResolvableApiException) e).startResolutionForResult(this, 456);
+                    } catch (IntentSender.SendIntentException e1) {
+                        e1.printStackTrace();
+                    }
+                } else {
+                    callMain(false); //authentication failed
+                }
             } else {
                 Log.w("SignIn", "handleSignInResult:error", e);
             }
@@ -109,6 +144,9 @@ public class SplashActivity extends AppCompatActivity {
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
+        }
+        if (requestCode == 456) {
+//            callMain(false);
         }
     }
 

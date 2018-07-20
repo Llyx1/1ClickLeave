@@ -9,12 +9,22 @@ public class User {
     public String fullName ;
     @SerializedName("photo")
     public String photo ;
-    @SerializedName("cluster_id")
-    public int cluster ;
+    @SerializedName("cluster")
+    public String cluster ;
     @SerializedName("email")
     public String email ;
     @SerializedName("phone")
     public String phone ;
-    @SerializedName("backup_buddy")
-    public String backupBuddy ;
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public int getId() {
+        return id;
+    }
 }

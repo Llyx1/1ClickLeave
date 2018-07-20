@@ -1,0 +1,59 @@
+{
+  "project_info": {
+    "project_number": "238855762944",
+    "firebase_url": "https://click1leave.firebaseio.com",
+    "project_id": "click1leave",
+    "storage_bucket": "click1leave.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:238855762944:android:4bdf4173e3f82526",
+        "android_client_info": {
+          "package_name": "com.example.boulocalix.a1click1leave"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "238855762944-4nu0q06ui3aj4f621bes5mjorh2mgqal.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "238855762944-nf2425ndf5l5tglv0gqkn6iuro4f6van.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.boulocalix.a1click1leave",
+            "certificate_hash": "900db6f6bf0760ac84bcb4d3e527eb0e93180da3"
+          }
+        },
+        {
+          "client_id": "238855762944-hr1u3g735jn7h888jj904q882e24nihm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPsR9ll5spMUXTqxCJZp7tcir7PWc5Au4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "238855762944-4nu0q06ui3aj4f621bes5mjorh2mgqal.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

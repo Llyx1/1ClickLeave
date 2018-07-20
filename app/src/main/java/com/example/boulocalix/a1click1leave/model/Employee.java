@@ -14,15 +14,9 @@ public final class Employee{
     private String idToken ;
     @SerializedName("user")
     private User user ;
-    @SerializedName("leave_record")
-    private List<LeaveType> leaveRecord;
+    @SerializedName("balanceAnnualLeave")
+    private Double balance;
 
-    public class LeaveType {
-        @SerializedName("type")
-        String typeOfLeave ;
-        @SerializedName("remaining_value")
-        Double balance ;
-    }
 
     private Employee() {
     }
@@ -38,12 +32,8 @@ public final class Employee{
         return user;
     }
 
-    public String getBackupBuddy() {
-        return user.backupBuddy;
-    }
-
     public Double getBalance() {
-        return leaveRecord.get(0).balance;
+        return balance;
     }
 
     public String getEmail() {
@@ -62,7 +52,7 @@ public final class Employee{
         return user.phone;
     }
 
-    public int getCluster() {return  user.cluster;}
+    public String getCluster() {return  user.cluster;}
 
     public String getPhoto() {return user.photo; }
 
@@ -70,12 +60,9 @@ public final class Employee{
         return idToken;
     }
 
-    public void setBackupBuddy(String backupBuddy) {
-        this.user.backupBuddy = backupBuddy;
-    }
 
     public void setBalance(Double balance) {
-        leaveRecord.get(0).balance = balance;
+        this.balance = balance;
     }
 
     public void setEmail(String email) {
@@ -98,7 +85,7 @@ public final class Employee{
         this.idToken = idToken ;
     }
 
-    public void setCluster(int cluster) {this.user.cluster = cluster ;}
+    public void setCluster(String cluster) {this.user.cluster = cluster ;}
 
 
 }

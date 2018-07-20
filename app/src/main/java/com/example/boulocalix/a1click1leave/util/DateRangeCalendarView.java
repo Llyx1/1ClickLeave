@@ -15,14 +15,17 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.archit.calendardaterangepicker.R;
 import com.archit.calendardaterangepicker.customviews.CustomTextView;
 import com.archit.calendardaterangepicker.models.DayContainer;
 import com.archit.calendardaterangepicker.timepicker.AwesomeTimePickerDialog;
+import com.example.boulocalix.a1click1leave.model.LeaveTypeDto;
 
 import java.text.DateFormatSymbols;
 import java.text.ParseException;
@@ -126,7 +129,7 @@ public class DateRangeCalendarView extends LinearLayout {
         LinearLayout mainView = (LinearLayout) layoutInflater.inflate(R.layout.layout_calendar_month, this, true);
         llDaysContainer = (LinearLayout) mainView.findViewById(R.id.llDaysContainer);
         llTitleWeekContainer = (LinearLayout) mainView.findViewById(R.id.llTitleWeekContainer);
-        llTitleWeekContainer.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, 50));
+        llTitleWeekContainer.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, 60));
         tvYearTitle = (CustomTextView) mainView.findViewById(R.id.tvYearTitle);
         imgVNavLeft = (ImageView) mainView.findViewById(R.id.imgVNavLeft);
         imgVNavRight = (ImageView) mainView.findViewById(R.id.imgVNavRight);
@@ -140,9 +143,8 @@ public class DateRangeCalendarView extends LinearLayout {
         }
         init = true ;
         drawCalendarForMonth(getCurrentMonth(Calendar.getInstance()));
-
-
         setWeekTitleColor(weekColor);
+//        setFonts(Typeface.createFromAsset(context.getAssets(), "fonts/notosans_regular.ttf"));
     }
 
     /**
@@ -309,42 +311,35 @@ public class DateRangeCalendarView extends LinearLayout {
         String dateText = new DateFormatSymbols(locale).getMonths()[currentCalendarMonth.get(Calendar.MONTH)];
         dateText = dateText.substring(0, 1).toUpperCase() + dateText.subSequence(1, dateText.length());
         tvYearTitle.setText(dateText + " " + currentCalendarMonth.get(Calendar.YEAR));
-        tvYearTitle.setTextColor(titleColor);
+        tvYearTitle.setTextColor(disableDateColor);
+        tvYearTitle.setTextSize(14);
+        tvYearTitle.setTypeface(null, Typeface.BOLD);
 
         month.add(Calendar.DATE, -startDay + 1);
 
         for (int i = 0; i < llDaysContainer.getChildCount(); i++) {
+            int dayHide = 0 ;
             LinearLayout weekRow = (LinearLayout) llDaysContainer.getChildAt(i);
             LayoutParams lp = new LayoutParams(LayoutParams.WRAP_CONTENT, 110) ;
             lp.setMargins(0,0,0,0);
             weekRow.setLayoutParams(lp);
+            weekRow.setVisibility(VISIBLE);
             weekRow.setBackgroundColor(Color.parseColor("#00FFFFFF"));
-            int numberOfEmptyChild = 0 ;
             for (int j = 0; j < 7; j++) {
                 RelativeLayout rlDayContainer = (RelativeLayout) weekRow.getChildAt(j);
-
                 DayContainer container = new DayContainer(rlDayContainer);
-
                 container.tvDate.setText(String.valueOf(month.get(Calendar.DATE)));
                 if (fonts != null) {
                     container.tvDate.setTypeface(fonts);
                 }
-                RelativeLayout.LayoutParams lp1 = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT) ;
-                lp1.setMargins(0,0,0,0);
-                container.tvDate.setLayoutParams(lp1);
-//                container.rootView.setLayoutParams(lp);
                 container.tvDate.setBackgroundColor(Color.parseColor("#00FFFFFF"));
                 container.rootView.setBackgroundColor(Color.parseColor("#00FFFFFF"));
-//                if (container.tvDate.isCursorVisible()){
-//                    numberOfEmptyChild ++ ;
-//                    rlDayContainer.setVisibility(GONE);
-//                    if (numberOfEmptyChild == 7){
-//                        weekRow.setVisibility(GONE);
-//                    }
-//                }
                 Log.v("Hello", "Date: " + month.getTime().toString());
-                drawDayContainer(container, month);
+                dayHide += drawDayContainer(container, month);
                 month.add(Calendar.DATE, 1);
+            }
+            if (dayHide==7) {
+                weekRow.setVisibility(GONE);
             }
         }
     }
@@ -355,14 +350,15 @@ public class DateRangeCalendarView extends LinearLayout {
      * @param container - Date container
      * @param calendar  - Calendar obj of specific date of the month.
      */
-    private void drawDayContainer(DayContainer container, Calendar calendar) {
+    private int drawDayContainer(DayContainer container, Calendar calendar) {
 
         Calendar today = Calendar.getInstance();
-
+        container.tvDate.setTextSize(12);
         int date = calendar.get(Calendar.DATE);
-
+        int dayHide =0;
         if (currentCalendarMonth.get(Calendar.MONTH) != calendar.get(Calendar.MONTH)) {
             hideDayContainer(container);
+            dayHide = 1 ;
         } else if (today.after(calendar) && (today.get(Calendar.DAY_OF_YEAR) != calendar.get(Calendar.DAY_OF_YEAR))) {
             disableDayContainer(container);
             container.tvDate.setText(String.valueOf(date));
@@ -395,6 +391,7 @@ public class DateRangeCalendarView extends LinearLayout {
         }
 
         container.rootView.setTag(DayContainer.GetContainerKey(calendar));
+    return  dayHide ;
     }
 
     /**
@@ -423,6 +420,7 @@ public class DateRangeCalendarView extends LinearLayout {
         container.tvDate.setTextColor(disableDateColor);
         container.rootView.setVisibility(VISIBLE);
         container.rootView.setOnClickListener(dayClickListener);
+
     }
 
     /**
@@ -449,8 +447,10 @@ public class DateRangeCalendarView extends LinearLayout {
         RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) container.strip.getLayoutParams();
         if (stripType == STRIP_TYPE_LEFT) {
             GradientDrawable mDrawable = (GradientDrawable) ContextCompat.getDrawable(mContext, R.drawable.range_bg_left);
+            //TODO change selection
             mDrawable.setColor(rangeStripColor);
             container.strip.setBackground(mDrawable);
+//            container.tvDate.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/notosans_bold.tff"));
             layoutParams.setMargins(20, 0, 0, 0);
         } else if (stripType == STRIP_TYPE_RIGHT) {
             GradientDrawable mDrawable = (GradientDrawable) ContextCompat.getDrawable(mContext, R.drawable.range_bg_right);
@@ -458,13 +458,11 @@ public class DateRangeCalendarView extends LinearLayout {
             container.strip.setBackground(mDrawable);
             layoutParams.setMargins(0, 0, 20, 0);
         } else {
-            container.strip.setBackgroundColor(Color.TRANSPARENT);
-            layoutParams.setMargins(0, 0, 0, 0);
+            Drawable mDrawable = mContext.getDrawable(com.example.boulocalix.a1click1leave.R.drawable.cercle_selector_calendar);
+            container.strip.setBackground(mDrawable);
+            layoutParams.setMargins(25, 0, 25, 0);
         }
         container.strip.setLayoutParams(layoutParams);
-        Drawable mDrawable = mContext.getDrawable(com.example.boulocalix.a1click1leave.R.drawable.cercle_selector_calendar);
-//        mDrawable.setColor(selectedDateCircleColor);
-        container.tvDate.setBackground(mDrawable);
         container.rootView.setBackgroundColor(Color.TRANSPARENT);
         container.tvDate.setTextColor(selectedDateColor);
         container.rootView.setVisibility(VISIBLE);
@@ -477,6 +475,7 @@ public class DateRangeCalendarView extends LinearLayout {
      */
     private void makeAsRangeDate(DayContainer container) {
         container.tvDate.setBackgroundColor(Color.TRANSPARENT);
+        //TODO change background
         GradientDrawable mDrawable = (GradientDrawable) ContextCompat.getDrawable(mContext, R.drawable.range_bg);
         mDrawable.setColor(rangeStripColor);
         container.strip.setBackground(mDrawable);
@@ -586,6 +585,7 @@ public class DateRangeCalendarView extends LinearLayout {
         for (int i = 0; i < llTitleWeekContainer.getChildCount(); i++) {
             CustomTextView textView = (CustomTextView) llTitleWeekContainer.getChildAt(i);
             textView.setTextColor(color);
+            textView.setTextSize(12);
         }
     }
 
@@ -598,12 +598,13 @@ public class DateRangeCalendarView extends LinearLayout {
         this.fonts = fonts;
         if (fonts != null) {
             drawCalendarForMonth(currentCalendarMonth);
-            tvYearTitle.setTypeface(fonts);
+//            tvYearTitle.setTypeface(Typeface.createFromAsset(mContext.getAssets(), "fonts/notosans_bold.tff"));
 
             for (int i = 0; i < llTitleWeekContainer.getChildCount(); i++) {
 
                 CustomTextView textView = (CustomTextView) llTitleWeekContainer.getChildAt(i);
                 textView.setTypeface(fonts);
+                textView.setTextSize(12);
 
             }
         }

@@ -11,6 +11,8 @@ public final class LeaveTicket {
     private String thanks ;
     @SerializedName("gift")
     private String gift ;
+    @SerializedName("useful_tip")
+    private String tips;
 
 
 
@@ -24,5 +26,9 @@ public final class LeaveTicket {
 
     public String getThanks() {
         return thanks;
+    }
+
+    public String getTips() {
+        return tips;
     }
 }

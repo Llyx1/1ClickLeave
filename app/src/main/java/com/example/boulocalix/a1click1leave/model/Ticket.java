@@ -22,6 +22,8 @@ public class Ticket {
     private int leavetypeId ;
      @SerializedName("status_id")
      private int status ;
+     @SerializedName("id")
+     private int id ;
 
     public Ticket(int userId, String startDate, String endDate, Double numberOfDays, String note, int leavetypeId) {
         this.leavetypeId=leavetypeId ;
@@ -36,8 +38,12 @@ public class Ticket {
     }
 
     public String getStartDate() {
-
-        return startDate.substring(8,10)+ "-"+ startDate.substring(5,8) + startDate.substring(2,4);
+        if (startDate!=null) {
+            return startDate.substring(8, 10) + "-" + startDate.substring(5, 8) + startDate.substring(2, 4);
+        }
+        else {
+            return null;
+        }
     }
 
     public Double getNumberOfDay() {
@@ -46,9 +52,10 @@ public class Ticket {
 
     public String getReason() {
         String reason = "" ;
+        //TODO change this and the two array in the string file if a new Leavetype appears.
         switch (leavetypeId) {
             case 1 :
-                reason = "Paid leave" ;
+                reason = "Annual leave" ;
                 break;
             case 2:
                 reason = "Unpaid leave" ;
@@ -71,6 +78,12 @@ public class Ticket {
             case 8 :
                 reason="Wedding";
                 break;
+            case 9 :
+                reason="Children's wedding";
+                break;
+            case 10 :
+                reason="Work from home";
+                break;
                 default:
         }
         return reason ;
@@ -81,5 +94,9 @@ public class Ticket {
 
     public int getStatus() {
         return status;
+    }
+
+    public int getId() {
+        return id;
     }
 }

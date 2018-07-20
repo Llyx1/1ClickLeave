@@ -4,9 +4,14 @@
     <color name="colorPrimaryDark">#3f333F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="white">#FFFFFF</color>
-    <color name="dark_grey">#424242</color>
-    <color name="grey">#BDBDBD</color>
-    <color name="light_grey">#EEEEEE</color>
-    <color name="dark_salmon">#E53935</color>
+    <color name="turquoise">#46C4C2</color>
+    <color name="button_grey">#CBD5D5</color>
+    <color name="pink_logout">#FE5079</color>
+    <color name="dark">#494D4D</color>
+    <color name="midtone">#777B7B</color>
+    <color name="light">#A9B1B1</color>
+    <color name="pink_text">#FDA0A8</color>
+    <color name="green_text">#6ACAC6</color>
     <color name="transparent">#00FFFFFF</color>
+
 </resources>

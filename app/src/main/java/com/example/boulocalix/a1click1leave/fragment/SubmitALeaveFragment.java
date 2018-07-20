@@ -18,6 +18,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -36,9 +37,11 @@ import com.example.boulocalix.a1click1leave.R;
 import com.example.boulocalix.a1click1leave.callbacks.onMainToFragmentCallbacks;
 import com.example.boulocalix.a1click1leave.model.Employee;
 
+import com.example.boulocalix.a1click1leave.model.User;
 import com.example.boulocalix.a1click1leave.util.CalendarUtil;
 import com.example.boulocalix.a1click1leave.util.DateRangeCalendarView;
 import com.example.boulocalix.a1click1leave.util.KeyboardUtil;
+import com.example.boulocalix.a1click1leave.util.SharePrefer;
 import com.google.android.gms.plus.PlusShare;
 
 import java.text.SimpleDateFormat;
@@ -68,14 +71,10 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
     Button minusZeroFive ;
     Button plusZeroFive ;
     Dialog myDialog ;
+    SharePrefer sharePrefer ;
 
     public SubmitALeaveFragment() {}
 
-    public interface CalendarUtil {
-        void onDateRangeSelected(Calendar startDate, Calendar endDate);
-        void onDateSelected(Calendar date) ;
-        void onCancel();
-    }
 
     public static SubmitALeaveFragment newInstance() {
         SubmitALeaveFragment fragment = new SubmitALeaveFragment();
@@ -94,8 +93,13 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
         } catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
+        sharePrefer = new SharePrefer(context) ;
+    }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        main.setBottomNavigationViewSelectedItem(R.id.navigation_submit_a_leave);
     }
 
     @Nullable
@@ -106,6 +110,9 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
         submitALeave.setOnClickListener(this);
         submitButton = submitALeave.findViewById(R.id.button_submit) ;
         spinner = submitALeave.findViewById(R.id.spinner);
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(context,
+                R.array.choice_array, R.layout.spinner_item_leave_request);
+        spinner.setAdapter(adapter);
         recap = submitALeave.findViewById(R.id.default_time) ;
         KeyboardUtil.hideKeyboard(context);
         recap.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -203,13 +210,18 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
                 break ;
             case R.id.button_submit :
                 if (checkDate()) {
+                    if (Double.parseDouble(recap.getText().toString()) < sharePrefer.getBalance()
+                            || spinner.getSelectedItemId() !=0) {
                     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
                     ArrayList<String> info = new ArrayList<>();
                     info.add(Double.toString(Double.parseDouble(recap.getText().toString())));
                     info.add(sdf.format(startLeaveDate));
                     info.add(sdf.format(endLeaveDate));
                     info.add(Integer.toString(spinner.getSelectedItemPosition()));
-                    main.onFragmentToMainCallbacks("SubmitALeaveFragment", info);
+                    main.onFragmentToMainCallbacks("SubmitALeaveFragment", info);}
+                    else {
+                        Toast.makeText(context, "you don't have enough paid leave for that request", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(context, "It seems that you are really late to submit that leave request. Please contact HR to regularize your situation", Toast.LENGTH_LONG).show();
                 }
@@ -222,7 +234,7 @@ public class SubmitALeaveFragment extends Fragment implements onMainToFragmentCa
 
 
     @Override
-    public void onMainToFragmentCallbacks(Employee employee) {
+    public void onMainToFragmentCallbacks(User user) {
 
     }
 

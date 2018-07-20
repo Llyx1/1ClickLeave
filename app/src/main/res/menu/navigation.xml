@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_submit_a_leave"
+        android:icon="@mipmap/icon_plus_light"
+        android:title=""/>
+
+    <item
+        android:id="@+id/navigation_historic"
+        android:icon="@mipmap/icon_list_light"
+        android:title=""/>
+
+
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@mipmap/icon_user_light"
+        android:title=""/>
+
+</menu>

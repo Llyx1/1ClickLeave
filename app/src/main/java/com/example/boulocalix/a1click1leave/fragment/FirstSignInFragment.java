@@ -2,6 +2,7 @@ package com.example.boulocalix.a1click1leave.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import com.example.boulocalix.a1click1leave.SplashActivity;
 import com.example.boulocalix.a1click1leave.callbacks.onMainToFragmentCallbacks;
 import com.example.boulocalix.a1click1leave.model.Employee;
 import com.example.boulocalix.a1click1leave.model.GoogleClient;
+import com.example.boulocalix.a1click1leave.model.User;
 import com.example.boulocalix.a1click1leave.util.ApiClient;
 import com.example.boulocalix.a1click1leave.util.ApiInterface;
 import com.example.boulocalix.a1click1leave.util.SharePrefer;
@@ -27,6 +29,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.gson.JsonObject;
@@ -68,16 +71,20 @@ public class FirstSignInFragment extends Fragment implements onMainToFragmentCal
         } catch (IllegalStateException e) {
             throw new IllegalStateException("MainActivity must implement callbacks");
         }
-        GoogleSignInClient googleSignInClient = SplashActivity.mGoogleSignInClient ;
+
+        sharePrefer = new SharePrefer(context) ;
+        }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("827349712490-u8rt9aemhfguugbnv897a1d6utn2dgai.apps.googleusercontent.com")
                 .requestEmail()
                 .build();
         mGoogleSignInClient = GoogleSignIn.getClient(context, gso);
         GoogleClient.getInstance(mGoogleSignInClient) ;
-        sharePrefer = new SharePrefer(context) ;
-        }
-
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -107,13 +114,14 @@ public class FirstSignInFragment extends Fragment implements onMainToFragmentCal
                 @Override
                 public void onResponse(Call<Employee> call, Response<Employee> response) {
                     Employee employee = response.body();
-                    sharePrefer.setEmployee(employee);
-                    sharePrefer.setPicture(mGoogleSignInAccount.getPhotoUrl().toString());
+
                     if (employee == null) {
                         Toast.makeText(context, "Your address is not part of our database, are you using your offy address ?", Toast.LENGTH_LONG).show();
                         signOut();
                     }
                     else {
+                        sharePrefer.setEmployee(employee);
+                        sharePrefer.setPicture(mGoogleSignInAccount.getPhotoUrl().toString());
                         main.onFragmentToMainCallbacks("SignIn", null);
                     }
                 }
@@ -122,10 +130,20 @@ public class FirstSignInFragment extends Fragment implements onMainToFragmentCal
                 public void onFailure(Call<Employee> call, Throwable t) {
                     // Log error here since request failed
                     Log.e("Json error", t.toString());
+                    Toast.makeText(context, t.toString(), Toast.LENGTH_LONG).show();
                 }
             });
         } catch (ApiException e) {
             if (e.getStatusCode() == 4) {
+                Toast.makeText(context, e.getStatusCode()+e.getMessage(), Toast.LENGTH_LONG).show();
+                if (e instanceof ResolvableApiException) {
+                    ((ResolvableApiException) e).getResolution() ;
+                    try {
+                        ((ResolvableApiException) e).startResolutionForResult(main, RC_SIGN_IN);
+                    } catch (IntentSender.SendIntentException e1) {
+                        e1.printStackTrace();
+                    }
+                }
                 signIn();
             } else {
                 Log.w("SignIn", "handleSignInResult:error", e);
@@ -162,7 +180,7 @@ public class FirstSignInFragment extends Fragment implements onMainToFragmentCal
 
 
     @Override
-    public void onMainToFragmentCallbacks(Employee employee) {
+    public void onMainToFragmentCallbacks(User user) {
 
     }
 
